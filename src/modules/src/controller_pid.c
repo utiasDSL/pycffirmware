@@ -1,5 +1,5 @@
-
-#include "stabilizer.h"
+#include <stdio.h> 
+// #include "stabilizer.h"
 #include "stabilizer_types.h"
 
 #include "attitude_controller.h"
