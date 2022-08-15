@@ -56,7 +56,7 @@
  */
 
 #include "kalman_core.h"
-#include "cfassert.h"
+// #include "cfassert.h"
 
 #include "outlierFilter.h"
 #include "physicalConstants.h"
@@ -64,10 +64,10 @@
 #include "log.h"
 #include "param.h"
 #include "math3d.h"
-#include "debug.h"
-#include "static_mem.h"
+// #include "debug.h"
+// #include "static_mem.h"
 
-#include "lighthouse_calibration.h"
+// #include "lighthouse_calibration.h"
 
 // #define DEBUG_STATE_CHECK
 
@@ -99,7 +99,7 @@ static void assertStateNotNaN(const kalmanCoreData_t* this) {
       (isnan(this->q[2])) ||
       (isnan(this->q[3])))
   {
-    ASSERT(false);
+    // ASSERT(false);
   }
 
   for(int i=0; i<KC_STATE_DIM; i++) {
@@ -107,7 +107,7 @@ static void assertStateNotNaN(const kalmanCoreData_t* this) {
     {
       if (isnan(this->P[i][j]))
       {
-        ASSERT(false);
+        // ASSERT(false);
       }
     }
   }
@@ -163,7 +163,7 @@ void kalmanCoreInit(kalmanCoreData_t* this) {
   tdoaCount = 0;
 
   // Reset all data to 0 (like upon system reset)
-  memset(this, 0, sizeof(kalmanCoreData_t));
+  // memset(this, 0, sizeof(kalmanCoreData_t));
 
   this->S[KC_STATE_X] = initialX;
   this->S[KC_STATE_Y] = initialY;
@@ -212,33 +212,33 @@ void kalmanCoreInit(kalmanCoreData_t* this) {
 
   this->baroReferenceHeight = 0.0;
 
-  outlierFilterReset(&sweepOutlierFilterState, 0);
+  // outlierFilterReset(&sweepOutlierFilterState, 0);
 }
 
 static void scalarUpdate(kalmanCoreData_t* this, arm_matrix_instance_f32 *Hm, float error, float stdMeasNoise)
 {
   // The Kalman gain as a column vector
-  NO_DMA_CCM_SAFE_ZERO_INIT static float K[KC_STATE_DIM];
+  static float K[KC_STATE_DIM];
   static arm_matrix_instance_f32 Km = {KC_STATE_DIM, 1, (float *)K};
 
   // Temporary matrices for the covariance updates
-  NO_DMA_CCM_SAFE_ZERO_INIT __attribute__((aligned(4))) static float tmpNN1d[KC_STATE_DIM * KC_STATE_DIM];
+  static float tmpNN1d[KC_STATE_DIM * KC_STATE_DIM];
   static arm_matrix_instance_f32 tmpNN1m = {KC_STATE_DIM, KC_STATE_DIM, tmpNN1d};
 
-  NO_DMA_CCM_SAFE_ZERO_INIT __attribute__((aligned(4))) static float tmpNN2d[KC_STATE_DIM * KC_STATE_DIM];
+  static float tmpNN2d[KC_STATE_DIM * KC_STATE_DIM];
   static arm_matrix_instance_f32 tmpNN2m = {KC_STATE_DIM, KC_STATE_DIM, tmpNN2d};
 
-  NO_DMA_CCM_SAFE_ZERO_INIT __attribute__((aligned(4))) static float tmpNN3d[KC_STATE_DIM * KC_STATE_DIM];
+  static float tmpNN3d[KC_STATE_DIM * KC_STATE_DIM];
   static arm_matrix_instance_f32 tmpNN3m = {KC_STATE_DIM, KC_STATE_DIM, tmpNN3d};
 
-  NO_DMA_CCM_SAFE_ZERO_INIT __attribute__((aligned(4))) static float HTd[KC_STATE_DIM * 1];
+  static float HTd[KC_STATE_DIM * 1];
   static arm_matrix_instance_f32 HTm = {KC_STATE_DIM, 1, HTd};
 
-  NO_DMA_CCM_SAFE_ZERO_INIT __attribute__((aligned(4))) static float PHTd[KC_STATE_DIM * 1];
+  static float PHTd[KC_STATE_DIM * 1];
   static arm_matrix_instance_f32 PHTm = {KC_STATE_DIM, 1, PHTd};
 
-  ASSERT(Hm->numRows == 1);
-  ASSERT(Hm->numCols == KC_STATE_DIM);
+  // ASSERT(Hm->numRows == 1);
+  // ASSERT(Hm->numCols == KC_STATE_DIM);
 
   // ====== INNOVATION COVARIANCE ======
 
@@ -249,7 +249,7 @@ static void scalarUpdate(kalmanCoreData_t* this, arm_matrix_instance_f32 *Hm, fl
   for (int i=0; i<KC_STATE_DIM; i++) { // Add the element of HPH' to the above
     HPHR += Hm->pData[i]*PHTd[i]; // this obviously only works if the update is scalar (as in this function)
   }
-  ASSERT(!isnan(HPHR));
+  // ASSERT(!isnan(HPHR));
 
   // ====== MEASUREMENT UPDATE ======
   // Calculate the Kalman gain and perform the state update
@@ -563,71 +563,71 @@ void kalmanCoreUpdateWithYawError(kalmanCoreData_t *this, yawErrorMeasurement_t 
     scalarUpdate(this, &H, this->S[KC_STATE_D2] - error->yawError, error->stdDev);
 }
 
-void kalmanCoreUpdateWithSweepAngles(kalmanCoreData_t *this, sweepAngleMeasurement_t *sweepInfo, const uint32_t tick) {
-  // Rotate the sensor position from CF reference frame to global reference frame,
-  // using the CF roatation matrix
-  vec3d s;
-  arm_matrix_instance_f32 Rcf_ = {3, 3, (float32_t *)this->R};
-  arm_matrix_instance_f32 scf_ = {3, 1, (float32_t *)*sweepInfo->sensorPos};
-  arm_matrix_instance_f32 s_ = {3, 1, s};
-  mat_mult(&Rcf_, &scf_, &s_);
+// void kalmanCoreUpdateWithSweepAngles(kalmanCoreData_t *this, sweepAngleMeasurement_t *sweepInfo, const uint32_t tick) {
+//   // Rotate the sensor position from CF reference frame to global reference frame,
+//   // using the CF roatation matrix
+//   vec3d s;
+//   arm_matrix_instance_f32 Rcf_ = {3, 3, (float32_t *)this->R};
+//   arm_matrix_instance_f32 scf_ = {3, 1, (float32_t *)*sweepInfo->sensorPos};
+//   arm_matrix_instance_f32 s_ = {3, 1, s};
+//   mat_mult(&Rcf_, &scf_, &s_);
 
-  // Get the current state values of the position of the crazyflie (global reference frame) and add the relative sensor pos
-  vec3d pcf = {this->S[KC_STATE_X] + s[0], this->S[KC_STATE_Y] + s[1], this->S[KC_STATE_Z] + s[2]};
+//   // Get the current state values of the position of the crazyflie (global reference frame) and add the relative sensor pos
+//   vec3d pcf = {this->S[KC_STATE_X] + s[0], this->S[KC_STATE_Y] + s[1], this->S[KC_STATE_Z] + s[2]};
 
-  // Calculate the difference between the rotor and the sensor on the CF (global reference frame)
-  const vec3d* pr = sweepInfo->rotorPos;
-  vec3d stmp = {pcf[0] - (*pr)[0], pcf[1] - (*pr)[1], pcf[2] - (*pr)[2]};
-  arm_matrix_instance_f32 stmp_ = {3, 1, stmp};
+//   // Calculate the difference between the rotor and the sensor on the CF (global reference frame)
+//   const vec3d* pr = sweepInfo->rotorPos;
+//   vec3d stmp = {pcf[0] - (*pr)[0], pcf[1] - (*pr)[1], pcf[2] - (*pr)[2]};
+//   arm_matrix_instance_f32 stmp_ = {3, 1, stmp};
 
-  // Rotate the difference in position to the rotor reference frame,
-  // using the rotor inverse rotation matrix
-  vec3d sr;
-  arm_matrix_instance_f32 Rr_inv_ = {3, 3, (float32_t *)(*sweepInfo->rotorRotInv)};
-  arm_matrix_instance_f32 sr_ = {3, 1, sr};
-  mat_mult(&Rr_inv_, &stmp_, &sr_);
+//   // Rotate the difference in position to the rotor reference frame,
+//   // using the rotor inverse rotation matrix
+//   vec3d sr;
+//   arm_matrix_instance_f32 Rr_inv_ = {3, 3, (float32_t *)(*sweepInfo->rotorRotInv)};
+//   arm_matrix_instance_f32 sr_ = {3, 1, sr};
+//   mat_mult(&Rr_inv_, &stmp_, &sr_);
 
-  // The following computations are in the rotor refernece frame
-  const float x = sr[0];
-  const float y = sr[1];
-  const float z = sr[2];
-  const float t = sweepInfo->t;
-  const float tan_t = tanf(t);
+//   // The following computations are in the rotor refernece frame
+//   const float x = sr[0];
+//   const float y = sr[1];
+//   const float z = sr[2];
+//   const float t = sweepInfo->t;
+//   const float tan_t = tanf(t);
 
-  const float r2 = x * x + y * y;
-  const float r = arm_sqrt(r2);
+//   const float r2 = x * x + y * y;
+//   const float r = arm_sqrt(r2);
 
-  const float predictedSweepAngle = sweepInfo->calibrationMeasurementModel(x, y, z, t, sweepInfo->calib);
-  const float measuredSweepAngle = sweepInfo->measuredSweepAngle;
-  const float error = measuredSweepAngle - predictedSweepAngle;
+//   const float predictedSweepAngle = sweepInfo->calibrationMeasurementModel(x, y, z, t, sweepInfo->calib);
+//   const float measuredSweepAngle = sweepInfo->measuredSweepAngle;
+//   const float error = measuredSweepAngle - predictedSweepAngle;
 
-  if (outlierFilterValidateLighthouseSweep(&sweepOutlierFilterState, r, error, tick)) {
-    // Calculate H vector (in the rotor reference frame)
-    const float z_tan_t = z * tan_t;
-    const float qNum = r2 - z_tan_t * z_tan_t;
-    // Avoid singularity
-    if (qNum > 0.0001f) {
-      const float q = tan_t / arm_sqrt(qNum);
-      vec3d gr = {(-y - x * z * q) / r2, (x - y * z * q) / r2 , q};
+//   if (outlierFilterValidateLighthouseSweep(&sweepOutlierFilterState, r, error, tick)) {
+//     // Calculate H vector (in the rotor reference frame)
+//     const float z_tan_t = z * tan_t;
+//     const float qNum = r2 - z_tan_t * z_tan_t;
+//     // Avoid singularity
+//     if (qNum > 0.0001f) {
+//       const float q = tan_t / arm_sqrt(qNum);
+//       vec3d gr = {(-y - x * z * q) / r2, (x - y * z * q) / r2 , q};
 
-      // gr is in the rotor reference frame, rotate back to the global
-      // reference frame using the rotor rotation matrix
-      vec3d g;
-      arm_matrix_instance_f32 gr_ = {3, 1, gr};
-      arm_matrix_instance_f32 Rr_ = {3, 3, (float32_t *)(*sweepInfo->rotorRot)};
-      arm_matrix_instance_f32 g_ = {3, 1, g};
-      mat_mult(&Rr_, &gr_, &g_);
+//       // gr is in the rotor reference frame, rotate back to the global
+//       // reference frame using the rotor rotation matrix
+//       vec3d g;
+//       arm_matrix_instance_f32 gr_ = {3, 1, gr};
+//       arm_matrix_instance_f32 Rr_ = {3, 3, (float32_t *)(*sweepInfo->rotorRot)};
+//       arm_matrix_instance_f32 g_ = {3, 1, g};
+//       mat_mult(&Rr_, &gr_, &g_);
 
-      float h[KC_STATE_DIM] = {0};
-      h[KC_STATE_X] = g[0];
-      h[KC_STATE_Y] = g[1];
-      h[KC_STATE_Z] = g[2];
+//       float h[KC_STATE_DIM] = {0};
+//       h[KC_STATE_X] = g[0];
+//       h[KC_STATE_Y] = g[1];
+//       h[KC_STATE_Z] = g[2];
 
-      arm_matrix_instance_f32 H = {1, KC_STATE_DIM, h};
-      scalarUpdate(this, &H, error, sweepInfo->stdDev);
-    }
-  }
-}
+//       arm_matrix_instance_f32 H = {1, KC_STATE_DIM, h};
+//       scalarUpdate(this, &H, error, sweepInfo->stdDev);
+//     }
+//   }
+// }
 
 void kalmanCorePredict(kalmanCoreData_t* this, float cmdThrust, Axis3f *acc, Axis3f *gyro, float dt, bool quadIsFlying)
 {
@@ -653,14 +653,14 @@ void kalmanCorePredict(kalmanCoreData_t* this, float cmdThrust, Axis3f *acc, Axi
    */
 
   // The linearized update matrix
-  NO_DMA_CCM_SAFE_ZERO_INIT static float A[KC_STATE_DIM][KC_STATE_DIM];
+  static float A[KC_STATE_DIM][KC_STATE_DIM];
   static __attribute__((aligned(4))) arm_matrix_instance_f32 Am = { KC_STATE_DIM, KC_STATE_DIM, (float *)A}; // linearized dynamics for covariance update;
 
   // Temporary matrices for the covariance updates
-  NO_DMA_CCM_SAFE_ZERO_INIT static float tmpNN1d[KC_STATE_DIM * KC_STATE_DIM];
+  static float tmpNN1d[KC_STATE_DIM * KC_STATE_DIM];
   static __attribute__((aligned(4))) arm_matrix_instance_f32 tmpNN1m = { KC_STATE_DIM, KC_STATE_DIM, tmpNN1d};
 
-  NO_DMA_CCM_SAFE_ZERO_INIT static float tmpNN2d[KC_STATE_DIM * KC_STATE_DIM];
+  static float tmpNN2d[KC_STATE_DIM * KC_STATE_DIM];
   static __attribute__((aligned(4))) arm_matrix_instance_f32 tmpNN2m = { KC_STATE_DIM, KC_STATE_DIM, tmpNN2d};
 
   float dt2 = dt*dt;
@@ -906,14 +906,14 @@ void kalmanCoreAddProcessNoise(kalmanCoreData_t* this, float dt)
 void kalmanCoreFinalize(kalmanCoreData_t* this, uint32_t tick)
 {
   // Matrix to rotate the attitude covariances once updated
-  NO_DMA_CCM_SAFE_ZERO_INIT static float A[KC_STATE_DIM][KC_STATE_DIM];
+  static float A[KC_STATE_DIM][KC_STATE_DIM];
   static arm_matrix_instance_f32 Am = {KC_STATE_DIM, KC_STATE_DIM, (float *)A};
 
   // Temporary matrices for the covariance updates
-  NO_DMA_CCM_SAFE_ZERO_INIT static float tmpNN1d[KC_STATE_DIM * KC_STATE_DIM];
+  static float tmpNN1d[KC_STATE_DIM * KC_STATE_DIM];
   static arm_matrix_instance_f32 tmpNN1m = {KC_STATE_DIM, KC_STATE_DIM, tmpNN1d};
 
-  NO_DMA_CCM_SAFE_ZERO_INIT static float tmpNN2d[KC_STATE_DIM * KC_STATE_DIM];
+  static float tmpNN2d[KC_STATE_DIM * KC_STATE_DIM];
   static arm_matrix_instance_f32 tmpNN2m = {KC_STATE_DIM, KC_STATE_DIM, tmpNN2d};
 
   // Incorporate the attitude error (Kalman filter state) with the attitude

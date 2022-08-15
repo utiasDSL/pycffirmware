@@ -14,7 +14,7 @@ include = [
     os.path.join(fw_dir, "src/utils/interface"),
     os.path.join(fw_dir, "src/config"),
     os.path.join(fw_dir, "src/drivers/interface"),
-    # os.path.join(fw_dir, "vendor/CMSIS/CMSIS/Include"),
+    os.path.join(fw_dir, "vendor/CMSIS/CMSIS/Include"),
     np.get_include(),
 ]
 
@@ -29,9 +29,10 @@ modules = [
     "pid.c",
     "sensfusion6.c",
     "crtp_commander_high_level.c",
-    # "estimator_kalman.c",
-    # "kalman_core.c",
-    # "outlierFilter.c"
+    "estimator_kalman.c",
+    "kalman_core.c",
+    "kalman_supervisor.c",
+    "outlierFilter.c"
 ]
 utils = [
     "filter.c",

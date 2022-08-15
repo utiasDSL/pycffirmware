@@ -60,23 +60,23 @@
 #include "estimator_kalman.h"
 #include "kalman_supervisor.h"
 
-#include "FreeRTOS.h"
-#include "queue.h"
-#include "task.h"
-#include "semphr.h"
-#include "sensors.h"
-#include "static_mem.h"
+// #include "FreeRTOS.h"
+// #include "queue.h"
+// #include "task.h"
+// #include "semphr.h"
+// #include "sensors.h"
+// #include "static_mem.h"
 
 #include "system.h"
 #include "log.h"
 #include "param.h"
 #include "physicalConstants.h"
 
-#include "statsCnt.h"
+// #include "statsCnt.h"
 #include "rateSupervisor.h"
 
 #define DEBUG_MODULE "ESTKALMAN"
-#include "debug.h"
+// #include "debug.h"
 
 
 // #define KALMAN_USE_BARO_UPDATE
@@ -94,85 +94,85 @@
  */
 
 // Distance-to-point measurements
-static xQueueHandle distDataQueue;
-STATIC_MEM_QUEUE_ALLOC(distDataQueue, 10, sizeof(distanceMeasurement_t));
+// static xQueueHandle distDataQueue;
+// STATIC_MEM_QUEUE_ALLOC(distDataQueue, 10, sizeof(distanceMeasurement_t));
 
-static inline bool stateEstimatorHasDistanceMeasurement(distanceMeasurement_t *dist) {
-  return (pdTRUE == xQueueReceive(distDataQueue, dist, 0));
-}
+// static inline bool stateEstimatorHasDistanceMeasurement(distanceMeasurement_t *dist) {
+//   return (pdTRUE == xQueueReceive(distDataQueue, dist, 0));
+// }
 
-// Direct measurements of Crazyflie position
-static xQueueHandle posDataQueue;
-STATIC_MEM_QUEUE_ALLOC(posDataQueue, 10, sizeof(positionMeasurement_t));
+// // Direct measurements of Crazyflie position
+// static xQueueHandle posDataQueue;
+// STATIC_MEM_QUEUE_ALLOC(posDataQueue, 10, sizeof(positionMeasurement_t));
 
-static inline bool stateEstimatorHasPositionMeasurement(positionMeasurement_t *pos) {
-  return (pdTRUE == xQueueReceive(posDataQueue, pos, 0));
-}
+// static inline bool stateEstimatorHasPositionMeasurement(positionMeasurement_t *pos) {
+//   return (pdTRUE == xQueueReceive(posDataQueue, pos, 0));
+// }
 
-// Direct measurements of Crazyflie pose
-static xQueueHandle poseDataQueue;
-STATIC_MEM_QUEUE_ALLOC(poseDataQueue, 10, sizeof(poseMeasurement_t));
+// // Direct measurements of Crazyflie pose
+// static xQueueHandle poseDataQueue;
+// STATIC_MEM_QUEUE_ALLOC(poseDataQueue, 10, sizeof(poseMeasurement_t));
 
-static inline bool stateEstimatorHasPoseMeasurement(poseMeasurement_t *pose) {
-  return (pdTRUE == xQueueReceive(poseDataQueue, pose, 0));
-}
+// static inline bool stateEstimatorHasPoseMeasurement(poseMeasurement_t *pose) {
+//   return (pdTRUE == xQueueReceive(poseDataQueue, pose, 0));
+// }
 
-// Measurements of a UWB Tx/Rx
-static xQueueHandle tdoaDataQueue;
-STATIC_MEM_QUEUE_ALLOC(tdoaDataQueue, 10, sizeof(tdoaMeasurement_t));
+// // Measurements of a UWB Tx/Rx
+// static xQueueHandle tdoaDataQueue;
+// STATIC_MEM_QUEUE_ALLOC(tdoaDataQueue, 10, sizeof(tdoaMeasurement_t));
 
-static inline bool stateEstimatorHasTDOAPacket(tdoaMeasurement_t *uwb) {
-  return (pdTRUE == xQueueReceive(tdoaDataQueue, uwb, 0));
-}
+// static inline bool stateEstimatorHasTDOAPacket(tdoaMeasurement_t *uwb) {
+//   return (pdTRUE == xQueueReceive(tdoaDataQueue, uwb, 0));
+// }
 
-// Measurements of flow (dnx, dny)
-static xQueueHandle flowDataQueue;
-STATIC_MEM_QUEUE_ALLOC(flowDataQueue, 10, sizeof(flowMeasurement_t));
+// // Measurements of flow (dnx, dny)
+// static xQueueHandle flowDataQueue;
+// STATIC_MEM_QUEUE_ALLOC(flowDataQueue, 10, sizeof(flowMeasurement_t));
 
-static inline bool stateEstimatorHasFlowPacket(flowMeasurement_t *flow) {
-  return (pdTRUE == xQueueReceive(flowDataQueue, flow, 0));
-}
+// static inline bool stateEstimatorHasFlowPacket(flowMeasurement_t *flow) {
+//   return (pdTRUE == xQueueReceive(flowDataQueue, flow, 0));
+// }
 
-// Measurements of TOF from laser sensor
-static xQueueHandle tofDataQueue;
-STATIC_MEM_QUEUE_ALLOC(tofDataQueue, 10, sizeof(tofMeasurement_t));
+// // Measurements of TOF from laser sensor
+// static xQueueHandle tofDataQueue;
+// STATIC_MEM_QUEUE_ALLOC(tofDataQueue, 10, sizeof(tofMeasurement_t));
 
-static inline bool stateEstimatorHasTOFPacket(tofMeasurement_t *tof) {
-  return (pdTRUE == xQueueReceive(tofDataQueue, tof, 0));
-}
+// static inline bool stateEstimatorHasTOFPacket(tofMeasurement_t *tof) {
+//   return (pdTRUE == xQueueReceive(tofDataQueue, tof, 0));
+// }
 
-// Absolute height measurement along the room Z
-static xQueueHandle heightDataQueue;
-STATIC_MEM_QUEUE_ALLOC(heightDataQueue, 10, sizeof(heightMeasurement_t));
+// // Absolute height measurement along the room Z
+// static xQueueHandle heightDataQueue;
+// STATIC_MEM_QUEUE_ALLOC(heightDataQueue, 10, sizeof(heightMeasurement_t));
 
-static inline bool stateEstimatorHasHeightPacket(heightMeasurement_t *height) {
-  return (pdTRUE == xQueueReceive(heightDataQueue, height, 0));
-}
+// static inline bool stateEstimatorHasHeightPacket(heightMeasurement_t *height) {
+//   return (pdTRUE == xQueueReceive(heightDataQueue, height, 0));
+// }
 
 
-static xQueueHandle yawErrorDataQueue;
-STATIC_MEM_QUEUE_ALLOC(yawErrorDataQueue, 10, sizeof(yawErrorMeasurement_t));
+// static xQueueHandle yawErrorDataQueue;
+// STATIC_MEM_QUEUE_ALLOC(yawErrorDataQueue, 10, sizeof(yawErrorMeasurement_t));
 
-static inline bool stateEstimatorHasYawErrorPacket(yawErrorMeasurement_t *error)
-{
-  return (pdTRUE == xQueueReceive(yawErrorDataQueue, error, 0));
-}
+// static inline bool stateEstimatorHasYawErrorPacket(yawErrorMeasurement_t *error)
+// {
+//   return (pdTRUE == xQueueReceive(yawErrorDataQueue, error, 0));
+// }
 
-static xQueueHandle sweepAnglesDataQueue;
-STATIC_MEM_QUEUE_ALLOC(sweepAnglesDataQueue, 10, sizeof(sweepAngleMeasurement_t));
+// static xQueueHandle sweepAnglesDataQueue;
+// STATIC_MEM_QUEUE_ALLOC(sweepAnglesDataQueue, 10, sizeof(sweepAngleMeasurement_t));
 
-static inline bool stateEstimatorHasSweepAnglesPacket(sweepAngleMeasurement_t *angles)
-{
-  return (pdTRUE == xQueueReceive(sweepAnglesDataQueue, angles, 0));
-}
+// static inline bool stateEstimatorHasSweepAnglesPacket(sweepAngleMeasurement_t *angles)
+// {
+//   return (pdTRUE == xQueueReceive(sweepAnglesDataQueue, angles, 0));
+// }
 
-// Semaphore to signal that we got data from the stabilzer loop to process
-static SemaphoreHandle_t runTaskSemaphore;
+// // Semaphore to signal that we got data from the stabilzer loop to process
+// static SemaphoreHandle_t runTaskSemaphore;
 
-// Mutex to protect data that is shared between the task and
-// functions called by the stabilizer loop
-static SemaphoreHandle_t dataMutex;
-static StaticSemaphore_t dataMutexBuffer;
+// // Mutex to protect data that is shared between the task and
+// // functions called by the stabilizer loop
+// static SemaphoreHandle_t dataMutex;
+// static StaticSemaphore_t dataMutexBuffer;
 
 
 /**
@@ -193,7 +193,7 @@ static StaticSemaphore_t dataMutexBuffer;
 #define IN_FLIGHT_THRUST_THRESHOLD (GRAVITY_MAGNITUDE*0.1f)
 #define IN_FLIGHT_TIME_THRESHOLD (500)
 
-// The bounds on the covariance, these shouldn't be hit, but sometimes are... why?
+// The bounds on the covariance, these shouldn'tick be hit, but sometimes are... why?
 #define MAX_COVARIANCE (100)
 #define MIN_COVARIANCE (1e-6f)
 
@@ -210,13 +210,14 @@ static StaticSemaphore_t dataMutexBuffer;
  * For more information, refer to the paper
  */
 
-NO_DMA_CCM_SAFE_ZERO_INIT static kalmanCoreData_t coreData;
+static kalmanCoreData_t coreData;
 
 /**
  * Internal variables. Note that static declaration results in default initialization (to 0)
  */
 
 static bool isInit = false;
+static float tick = 0; 
 
 static Axis3f accAccumulator;
 static float thrustAccumulator;
@@ -237,16 +238,17 @@ static Axis3f accSnapshot; // A snpashot of the latest acc data, used by the tas
 
 // Statistics
 #define ONE_SECOND 1000
-static STATS_CNT_RATE_DEFINE(updateCounter, ONE_SECOND);
-static STATS_CNT_RATE_DEFINE(predictionCounter, ONE_SECOND);
-static STATS_CNT_RATE_DEFINE(baroUpdateCounter, ONE_SECOND);
-static STATS_CNT_RATE_DEFINE(finalizeCounter, ONE_SECOND);
-static STATS_CNT_RATE_DEFINE(measurementAppendedCounter, ONE_SECOND);
-static STATS_CNT_RATE_DEFINE(measurementNotAppendedCounter, ONE_SECOND);
+// static STATS_CNT_RATE_DEFINE(updateCounter, ONE_SECOND);
+// static STATS_CNT_RATE_DEFINE(predictionCounter, ONE_SECOND);
+// static STATS_CNT_RATE_DEFINE(baroUpdateCounter, ONE_SECOND);
+// static STATS_CNT_RATE_DEFINE(finalizeCounter, ONE_SECOND);
+// static STATS_CNT_RATE_DEFINE(measurementAppendedCounter, ONE_SECOND);
+// static STATS_CNT_RATE_DEFINE(measurementNotAppendedCounter, ONE_SECOND);
 
 static rateSupervisor_t rateSupervisorContext;
 
-#define WARNING_HOLD_BACK_TIME M2T(2000)
+// #define WARNING_HOLD_BACK_TIME M2T(2000)
+#define WARNING_HOLD_BACK_TIME 2000
 static uint32_t warningBlockTime = 0;
 
 #ifdef KALMAN_USE_BARO_UPDATE
@@ -255,32 +257,57 @@ static const bool useBaroUpdate = true;
 static const bool useBaroUpdate = false;
 #endif
 
-static void kalmanTask(void* parameters);
+// static void kalmanTask(void* parameters);
 static bool predictStateForward(uint32_t osTick, float dt);
 static bool updateQueuedMeasurments(const Axis3f *gyro, const uint32_t tick);
 
-STATIC_MEM_TASK_ALLOC_STACK_NO_DMA_CCM_SAFE(kalmanTask, 3 * configMINIMAL_STACK_SIZE);
+// STATIC_MEM_TASK_ALLOC_STACK_NO_DMA_CCM_SAFE(kalmanTask, 3 * configMINIMAL_STACK_SIZE);
 
 // --------------------------------------------------
 
+uint32_t FREQ; 
+uint32_t lastPrediction; // = tick;
+uint32_t nextPrediction; // = tick;
+uint32_t lastPNUpdate; // = tick;
+uint32_t nextBaroUpdate; // = tick;
+
+static float T2S(uint32_t t){
+  float ret = t / FREQ;
+  return ret; 
+}
+
+static uint32_t S2T(float t){
+  uint32_t ret = t * FREQ;
+  return ret; 
+}
+void estimatorKalmanUpdateTime(float sim_time) {
+  tick = (uint32_t)(sim_time*FREQ);
+}
+void estimatorKalmanUpdateFreq(uint32_t freq) {
+  FREQ = freq;
+}
+
 // Called one time during system startup
 void estimatorKalmanTaskInit() {
-  distDataQueue = STATIC_MEM_QUEUE_CREATE(distDataQueue);
-  posDataQueue = STATIC_MEM_QUEUE_CREATE(posDataQueue);
-  poseDataQueue = STATIC_MEM_QUEUE_CREATE(poseDataQueue);
-  tdoaDataQueue = STATIC_MEM_QUEUE_CREATE(tdoaDataQueue);
-  flowDataQueue = STATIC_MEM_QUEUE_CREATE(flowDataQueue);
-  tofDataQueue = STATIC_MEM_QUEUE_CREATE(tofDataQueue);
-  heightDataQueue = STATIC_MEM_QUEUE_CREATE(heightDataQueue);
-  yawErrorDataQueue = STATIC_MEM_QUEUE_CREATE(yawErrorDataQueue);
-  sweepAnglesDataQueue = STATIC_MEM_QUEUE_CREATE(sweepAnglesDataQueue);
+//   distDataQueue = STATIC_MEM_QUEUE_CREATE(distDataQueue);
+//   posDataQueue = STATIC_MEM_QUEUE_CREATE(posDataQueue);
+//   poseDataQueue = STATIC_MEM_QUEUE_CREATE(poseDataQueue);
+//   tdoaDataQueue = STATIC_MEM_QUEUE_CREATE(tdoaDataQueue);
+//   flowDataQueue = STATIC_MEM_QUEUE_CREATE(flowDataQueue);
+//   tofDataQueue = STATIC_MEM_QUEUE_CREATE(tofDataQueue);
+//   heightDataQueue = STATIC_MEM_QUEUE_CREATE(heightDataQueue);
+//   yawErrorDataQueue = STATIC_MEM_QUEUE_CREATE(yawErrorDataQueue);
+//   sweepAnglesDataQueue = STATIC_MEM_QUEUE_CREATE(sweepAnglesDataQueue);
 
-  vSemaphoreCreateBinary(runTaskSemaphore);
+//   vSemaphoreCreateBinary(runTaskSemaphore);
 
-  dataMutex = xSemaphoreCreateMutexStatic(&dataMutexBuffer);
+//   dataMutex = xSemaphoreCreateMutexStatic(&dataMutexBuffer);
 
-  STATIC_MEM_TASK_CREATE(kalmanTask, kalmanTask, KALMAN_TASK_NAME, NULL, KALMAN_TASK_PRI);
-
+//   STATIC_MEM_TASK_CREATE(kalmanTask, kalmanTask, KALMAN_TASK_NAME, NULL, KALMAN_TASK_PRI);
+  lastPrediction = 0;
+  nextPrediction = 0;
+  lastPNUpdate = 0;
+  nextBaroUpdate = 0;
   isInit = true;
 }
 
@@ -288,29 +315,24 @@ bool estimatorKalmanTaskTest() {
   return isInit;
 }
 
-static void kalmanTask(void* parameters) {
-  systemWaitStart();
+void kalmanTask(void* parameters) { // Call once per update 
+  // systemWaitStart();
 
-  uint32_t lastPrediction = xTaskGetTickCount();
-  uint32_t nextPrediction = xTaskGetTickCount();
-  uint32_t lastPNUpdate = xTaskGetTickCount();
-  uint32_t nextBaroUpdate = xTaskGetTickCount();
+  // rateSupervisorInit(&rateSupervisorContext, tick, M2T(1000), 99, 101, 1);
 
-  rateSupervisorInit(&rateSupervisorContext, xTaskGetTickCount(), M2T(1000), 99, 101, 1);
-
-  while (true) {
-    xSemaphoreTake(runTaskSemaphore, portMAX_DELAY);
+  // while (true) {
+    // xSemaphoreTake(runTaskSemaphore, portMAX_DELAY);
 
     // If the client triggers an estimator reset via parameter update
     if (coreData.resetEstimation) {
       estimatorKalmanInit();
-      paramSetInt(paramGetVarId("kalman", "resetEstimation"), 0);
+      // paramSetInt(paramGetVarId("kalman", "resetEstimation"), 0);
     }
 
     // Tracks whether an update to the state has been made, and the state therefore requires finalization
     bool doneUpdate = false;
 
-    uint32_t osTick = xTaskGetTickCount(); // would be nice if this had a precision higher than 1ms...
+    uint32_t osTick = tick; // would be nice if this had a precision higher than 1ms...
 
   #ifdef KALMAN_DECOUPLE_XY
     kalmanCoreDecoupleXY(&coreData);
@@ -322,14 +344,14 @@ static void kalmanTask(void* parameters) {
       if (predictStateForward(osTick, dt)) {
         lastPrediction = osTick;
         doneUpdate = true;
-        STATS_CNT_RATE_EVENT(&predictionCounter);
+        // STATS_CNT_RATE_EVENT(&predictionCounter);
       }
 
       nextPrediction = osTick + S2T(1.0f / PREDICT_RATE);
 
-      if (!rateSupervisorValidate(&rateSupervisorContext, T2M(osTick))) {
-        DEBUG_PRINT("WARNING: Kalman prediction rate low (%lu)\n", rateSupervisorLatestCount(&rateSupervisorContext));
-      }
+      // if (!rateSupervisorValidate(&rateSupervisorContext, T2M(osTick))) {
+      //   DEBUG_PRINT("WARNING: Kalman prediction rate low (%lu)\n", rateSupervisorLatestCount(&rateSupervisorContext));
+      // }
     }
 
     /**
@@ -347,34 +369,34 @@ static void kalmanTask(void* parameters) {
      * Update the state estimate with the barometer measurements
      */
     // Accumulate the barometer measurements
-    if (useBaroUpdate) {
-      if (osTick > nextBaroUpdate // update at BARO_RATE
-          && baroAccumulatorCount > 0)
-      {
-        xSemaphoreTake(dataMutex, portMAX_DELAY);
-        float baroAslAverage = baroAslAccumulator / baroAccumulatorCount;
-        baroAslAccumulator = 0;
-        baroAccumulatorCount = 0;
-        xSemaphoreGive(dataMutex);
+    // if (useBaroUpdate) { // TODO: ADD THIS
+    //   if (osTick > nextBaroUpdate // update at BARO_RATE
+    //       && baroAccumulatorCount > 0)
+    //   {
+    //     xSemaphoreTake(dataMutex, portMAX_DELAY);
+    //     float baroAslAverage = baroAslAccumulator / baroAccumulatorCount;
+    //     baroAslAccumulator = 0;
+    //     baroAccumulatorCount = 0;
+    //     xSemaphoreGive(dataMutex);
 
-        kalmanCoreUpdateWithBaro(&coreData, baroAslAverage, quadIsFlying);
+    //     kalmanCoreUpdateWithBaro(&coreData, baroAslAverage, quadIsFlying);
 
-        nextBaroUpdate = osTick + S2T(1.0f / BARO_RATE);
-        doneUpdate = true;
+    //     nextBaroUpdate = osTick + S2T(1.0f / BARO_RATE);
+    //     doneUpdate = true;
 
-        STATS_CNT_RATE_EVENT(&baroUpdateCounter);
-      }
-    }
+    //     STATS_CNT_RATE_EVENT(&baroUpdateCounter);
+    //   }
+    // }
 
     {
       Axis3f gyro;
-      xSemaphoreTake(dataMutex, portMAX_DELAY);
+      // xSemaphoreTake(dataMutex, portMAX_DELAY);
       memcpy(&gyro, &gyroSnapshot, sizeof(gyro));
-      xSemaphoreGive(dataMutex);
+      // xSemaphoreGive(dataMutex);
 
-      if(updateQueuedMeasurments(&gyro, osTick)) {
-        doneUpdate = true;
-      }
+      // if(updateQueuedMeasurments(&gyro, osTick)) {
+      //   doneUpdate = true;
+      // }
     }
 
     /**
@@ -386,14 +408,14 @@ static void kalmanTask(void* parameters) {
 
     if (doneUpdate)
     {
-      kalmanCoreFinalize(&coreData, osTick);
-      STATS_CNT_RATE_EVENT(&finalizeCounter);
+      kalmanCoreFinalize(&coreData, osTick); // TODO 
+      // STATS_CNT_RATE_EVENT(&finalizeCounter);
       if (! kalmanSupervisorIsStateWithinBounds(&coreData)) {
         coreData.resetEstimation = true;
 
         if (osTick > warningBlockTime) {
           warningBlockTime = osTick + WARNING_HOLD_BACK_TIME;
-          DEBUG_PRINT("State out of bounds, resetting\n");
+          // DEBUG_PRINT("State out of bounds, resetting\n");
         }
       }
     }
@@ -402,36 +424,36 @@ static void kalmanTask(void* parameters) {
      * Finally, the internal state is externalized.
      * This is done every round, since the external state includes some sensor data
      */
-    xSemaphoreTake(dataMutex, portMAX_DELAY);
+    // xSemaphoreTake(dataMutex, portMAX_DELAY);
     kalmanCoreExternalizeState(&coreData, &taskEstimatorState, &accSnapshot, osTick);
-    xSemaphoreGive(dataMutex);
+    // xSemaphoreGive(dataMutex);
 
-    STATS_CNT_RATE_EVENT(&updateCounter);
-  }
+    // STATS_CNT_RATE_EVENT(&updateCounter);
+  // }
 }
 
-void estimatorKalman(state_t *state, sensorData_t *sensors, control_t *control, const uint32_t tick)
+void estimatorKalman(state_t *state, sensorData_t *sensors, control_t *control, const uint32_t tick) // Call every tick 
 {
   // This function is called from the stabilizer loop. It is important that this call returns
   // as quickly as possible. The dataMutex must only be locked short periods by the task.
-  xSemaphoreTake(dataMutex, portMAX_DELAY);
+  // xSemaphoreTake(dataMutex, portMAX_DELAY);
 
   // Average the last IMU measurements. We do this because the prediction loop is
   // slower than the IMU loop, but the IMU information is required externally at
   // a higher rate (for body rate control).
-  if (sensorsReadAcc(&sensors->acc)) {
+  // if (sensorsReadAcc(&sensors->acc)) {
     accAccumulator.x += sensors->acc.x;
     accAccumulator.y += sensors->acc.y;
     accAccumulator.z += sensors->acc.z;
     accAccumulatorCount++;
-  }
+  // }
 
-  if (sensorsReadGyro(&sensors->gyro)) {
+  // if (sensorsReadGyro(&sensors->gyro)) {
     gyroAccumulator.x += sensors->gyro.x;
     gyroAccumulator.y += sensors->gyro.y;
     gyroAccumulator.z += sensors->gyro.z;
     gyroAccumulatorCount++;
-  }
+  // }
 
   // Average the thrust command from the last time steps, generated externally by the controller
   thrustAccumulator += control->thrust;
@@ -439,10 +461,10 @@ void estimatorKalman(state_t *state, sensorData_t *sensors, control_t *control, 
 
   // Average barometer data
   if (useBaroUpdate) {
-    if (sensorsReadBaro(&sensors->baro)) {
+    // if (sensorsReadBaro(&sensors->baro)) {
       baroAslAccumulator += sensors->baro.asl;
       baroAccumulatorCount++;
-    }
+    // }
   }
 
   // Make a copy of sensor data to be used by the task
@@ -451,9 +473,9 @@ void estimatorKalman(state_t *state, sensorData_t *sensors, control_t *control, 
 
   // Copy the latest state, calculated by the task
   memcpy(state, &taskEstimatorState, sizeof(state_t));
-  xSemaphoreGive(dataMutex);
+  // xSemaphoreGive(dataMutex);
 
-  xSemaphoreGive(runTaskSemaphore);
+  // xSemaphoreGive(runTaskSemaphore);
 }
 
 static bool predictStateForward(uint32_t osTick, float dt) {
@@ -464,7 +486,7 @@ static bool predictStateForward(uint32_t osTick, float dt) {
     return false;
   }
 
-  xSemaphoreTake(dataMutex, portMAX_DELAY);
+  // xSemaphoreTake(dataMutex, portMAX_DELAY);
 
   // gyro is in deg/sec but the estimator requires rad/sec
   Axis3f gyroAverage;
@@ -488,7 +510,7 @@ static bool predictStateForward(uint32_t osTick, float dt) {
   thrustAccumulator = 0;
   thrustAccumulatorCount = 0;
 
-  xSemaphoreGive(dataMutex);
+  // xSemaphoreGive(dataMutex);
 
   // TODO: Find a better check for whether the quad is flying
   // Assume that the flight begins when the thrust is large enough and for now we never stop "flying".
@@ -506,89 +528,89 @@ static bool predictStateForward(uint32_t osTick, float dt) {
 }
 
 
-static bool updateQueuedMeasurments(const Axis3f *gyro, const uint32_t tick) {
-  bool doneUpdate = false;
-  /**
-   * Sensor measurements can come in sporadically and faster than the stabilizer loop frequency,
-   * we therefore consume all measurements since the last loop, rather than accumulating
-   */
+// static bool updateQueuedMeasurments(const Axis3f *gyro, const uint32_t tick) {
+//   bool doneUpdate = false;
+//   /**
+//    * Sensor measurements can come in sporadically and faster than the stabilizer loop frequency,
+//    * we therefore consume all measurements since the last loop, rather than accumulating
+//    */
 
-  tofMeasurement_t tof;
-  while (stateEstimatorHasTOFPacket(&tof))
-  {
-    kalmanCoreUpdateWithTof(&coreData, &tof);
-    doneUpdate = true;
-  }
+//   tofMeasurement_t tof;
+//   while (stateEstimatorHasTOFPacket(&tof))
+//   {
+//     kalmanCoreUpdateWithTof(&coreData, &tof);
+//     doneUpdate = true;
+//   }
 
-  yawErrorMeasurement_t yawError;
-  while (stateEstimatorHasYawErrorPacket(&yawError))
-  {
-    kalmanCoreUpdateWithYawError(&coreData, &yawError);
-    doneUpdate = true;
-  }
+//   yawErrorMeasurement_t yawError;
+//   while (stateEstimatorHasYawErrorPacket(&yawError))
+//   {
+//     kalmanCoreUpdateWithYawError(&coreData, &yawError);
+//     doneUpdate = true;
+//   }
 
-  heightMeasurement_t height;
-  while (stateEstimatorHasHeightPacket(&height))
-  {
-    kalmanCoreUpdateWithAbsoluteHeight(&coreData, &height);
-    doneUpdate = true;
-  }
+//   heightMeasurement_t height;
+//   while (stateEstimatorHasHeightPacket(&height))
+//   {
+//     kalmanCoreUpdateWithAbsoluteHeight(&coreData, &height);
+//     doneUpdate = true;
+//   }
 
-  distanceMeasurement_t dist;
-  while (stateEstimatorHasDistanceMeasurement(&dist))
-  {
-    kalmanCoreUpdateWithDistance(&coreData, &dist);
-    doneUpdate = true;
-  }
+//   distanceMeasurement_t dist;
+//   while (stateEstimatorHasDistanceMeasurement(&dist))
+//   {
+//     kalmanCoreUpdateWithDistance(&coreData, &dist);
+//     doneUpdate = true;
+//   }
 
-  positionMeasurement_t pos;
-  while (stateEstimatorHasPositionMeasurement(&pos))
-  {
-    kalmanCoreUpdateWithPosition(&coreData, &pos);
-    doneUpdate = true;
-  }
+//   positionMeasurement_t pos;
+//   while (stateEstimatorHasPositionMeasurement(&pos))
+//   {
+//     kalmanCoreUpdateWithPosition(&coreData, &pos);
+//     doneUpdate = true;
+//   }
 
-  poseMeasurement_t pose;
-  while (stateEstimatorHasPoseMeasurement(&pose))
-  {
-    kalmanCoreUpdateWithPose(&coreData, &pose);
-    doneUpdate = true;
-  }
+//   poseMeasurement_t pose;
+//   while (stateEstimatorHasPoseMeasurement(&pose))
+//   {
+//     kalmanCoreUpdateWithPose(&coreData, &pose);
+//     doneUpdate = true;
+//   }
 
-  tdoaMeasurement_t tdoa;
-  while (stateEstimatorHasTDOAPacket(&tdoa))
-  {
-    kalmanCoreUpdateWithTDOA(&coreData, &tdoa);
-    doneUpdate = true;
-  }
+//   tdoaMeasurement_t tdoa;
+//   while (stateEstimatorHasTDOAPacket(&tdoa))
+//   {
+//     kalmanCoreUpdateWithTDOA(&coreData, &tdoa);
+//     doneUpdate = true;
+//   }
 
-  flowMeasurement_t flow;
-  while (stateEstimatorHasFlowPacket(&flow))
-  {
-    kalmanCoreUpdateWithFlow(&coreData, &flow, gyro);
-    doneUpdate = true;
-  }
+//   flowMeasurement_t flow;
+//   while (stateEstimatorHasFlowPacket(&flow))
+//   {
+//     kalmanCoreUpdateWithFlow(&coreData, &flow, gyro);
+//     doneUpdate = true;
+//   }
 
-  sweepAngleMeasurement_t angles;
-  while (stateEstimatorHasSweepAnglesPacket(&angles))
-  {
-    kalmanCoreUpdateWithSweepAngles(&coreData, &angles, tick);
-    doneUpdate = true;
-  }
+//   sweepAngleMeasurement_t angles;
+//   while (stateEstimatorHasSweepAnglesPacket(&angles))
+//   {
+//     kalmanCoreUpdateWithSweepAngles(&coreData, &angles, tick);
+//     doneUpdate = true;
+//   }
 
-  return doneUpdate;
-}
+//   return doneUpdate;
+// }
 
 // Called when this estimator is activated
 void estimatorKalmanInit(void) {
-  xQueueReset(distDataQueue);
-  xQueueReset(posDataQueue);
-  xQueueReset(poseDataQueue);
-  xQueueReset(tdoaDataQueue);
-  xQueueReset(flowDataQueue);
-  xQueueReset(tofDataQueue);
+  // xQueueReset(distDataQueue);
+  // xQueueReset(posDataQueue);
+  // xQueueReset(poseDataQueue);
+  // xQueueReset(tdoaDataQueue);
+  // xQueueReset(flowDataQueue);
+  // xQueueReset(tofDataQueue);
 
-  xSemaphoreTake(dataMutex, portMAX_DELAY);
+  // xSemaphoreTake(dataMutex, portMAX_DELAY);
   accAccumulator = (Axis3f){.axis={0}};
   gyroAccumulator = (Axis3f){.axis={0}};
   thrustAccumulator = 0;
@@ -598,92 +620,92 @@ void estimatorKalmanInit(void) {
   gyroAccumulatorCount = 0;
   thrustAccumulatorCount = 0;
   baroAccumulatorCount = 0;
-  xSemaphoreGive(dataMutex);
+  // xSemaphoreGive(dataMutex);
 
-  kalmanCoreInit(&coreData);
+  kalmanCoreInit(&coreData); // TODO: THIS 
 }
 
-static bool appendMeasurement(xQueueHandle queue, void *measurement)
-{
-  portBASE_TYPE result;
-  bool isInInterrupt = (SCB->ICSR & SCB_ICSR_VECTACTIVE_Msk) != 0;
+// static bool appendMeasurement(xQueueHandle queue, void *measurement)
+// {
+//   portBASE_TYPE result;
+//   bool isInInterrupt = (SCB->ICSR & SCB_ICSR_VECTACTIVE_Msk) != 0;
 
-  if (isInInterrupt) {
-    portBASE_TYPE xHigherPriorityTaskWoken = pdFALSE;
-    result = xQueueSendFromISR(queue, measurement, &xHigherPriorityTaskWoken);
-    if(xHigherPriorityTaskWoken == pdTRUE)
-    {
-      portYIELD();
-    }
-  } else {
-    result = xQueueSend(queue, measurement, 0);
-  }
+//   if (isInInterrupt) {
+//     portBASE_TYPE xHigherPriorityTaskWoken = pdFALSE;
+//     result = xQueueSendFromISR(queue, measurement, &xHigherPriorityTaskWoken);
+//     if(xHigherPriorityTaskWoken == pdTRUE)
+//     {
+//       portYIELD();
+//     }
+//   } else {
+//     result = xQueueSend(queue, measurement, 0);
+//   }
 
-  if (result == pdTRUE) {
-    STATS_CNT_RATE_EVENT(&measurementAppendedCounter);
-    return true;
-  } else {
-    STATS_CNT_RATE_EVENT(&measurementNotAppendedCounter);
-    return true;
-  }
-}
+//   if (result == pdTRUE) {
+//     STATS_CNT_RATE_EVENT(&measurementAppendedCounter);
+//     return true;
+//   } else {
+//     STATS_CNT_RATE_EVENT(&measurementNotAppendedCounter);
+//     return true;
+//   }
+// }
 
-bool estimatorKalmanEnqueueTDOA(const tdoaMeasurement_t *uwb)
-{
-  ASSERT(isInit);
-  return appendMeasurement(tdoaDataQueue, (void *)uwb);
-}
+// bool estimatorKalmanEnqueueTDOA(const tdoaMeasurement_t *uwb)
+// {
+//   ASSERT(isInit);
+//   return appendMeasurement(tdoaDataQueue, (void *)uwb);
+// }
 
-bool estimatorKalmanEnqueuePosition(const positionMeasurement_t *pos)
-{
-  ASSERT(isInit);
-  return appendMeasurement(posDataQueue, (void *)pos);
-}
+// bool estimatorKalmanEnqueuePosition(const positionMeasurement_t *pos)
+// {
+//   ASSERT(isInit);
+//   return appendMeasurement(posDataQueue, (void *)pos);
+// }
 
-bool estimatorKalmanEnqueuePose(const poseMeasurement_t *pose)
-{
-  ASSERT(isInit);
-  return appendMeasurement(poseDataQueue, (void *)pose);
-}
+// bool estimatorKalmanEnqueuePose(const poseMeasurement_t *pose)
+// {
+//   ASSERT(isInit);
+//   return appendMeasurement(poseDataQueue, (void *)pose);
+// }
 
-bool estimatorKalmanEnqueueDistance(const distanceMeasurement_t *dist)
-{
-  ASSERT(isInit);
-  return appendMeasurement(distDataQueue, (void *)dist);
-}
+// bool estimatorKalmanEnqueueDistance(const distanceMeasurement_t *dist)
+// {
+//   ASSERT(isInit);
+//   return appendMeasurement(distDataQueue, (void *)dist);
+// }
 
-bool estimatorKalmanEnqueueFlow(const flowMeasurement_t *flow)
-{
-  // A flow measurement (dnx,  dny) [accumulated pixels]
-  ASSERT(isInit);
-  return appendMeasurement(flowDataQueue, (void *)flow);
-}
+// bool estimatorKalmanEnqueueFlow(const flowMeasurement_t *flow)
+// {
+//   // A flow measurement (dnx,  dny) [accumulated pixels]
+//   ASSERT(isInit);
+//   return appendMeasurement(flowDataQueue, (void *)flow);
+// }
 
-bool estimatorKalmanEnqueueTOF(const tofMeasurement_t *tof)
-{
-  // A distance (distance) [m] to the ground along the z_B axis.
-  ASSERT(isInit);
-  return appendMeasurement(tofDataQueue, (void *)tof);
-}
+// bool estimatorKalmanEnqueueTOF(const tofMeasurement_t *tof)
+// {
+//   // A distance (distance) [m] to the ground along the z_B axis.
+//   ASSERT(isInit);
+//   return appendMeasurement(tofDataQueue, (void *)tof);
+// }
 
-bool estimatorKalmanEnqueueAbsoluteHeight(const heightMeasurement_t *height)
-{
-  // A distance (height) [m] to the ground along the z axis.
-  ASSERT(isInit);
-  return appendMeasurement(heightDataQueue, (void *)height);
-}
+// bool estimatorKalmanEnqueueAbsoluteHeight(const heightMeasurement_t *height)
+// {
+//   // A distance (height) [m] to the ground along the z axis.
+//   ASSERT(isInit);
+//   return appendMeasurement(heightDataQueue, (void *)height);
+// }
 
-bool estimatorKalmanEnqueueYawError(const yawErrorMeasurement_t* error)
-{
-  ASSERT(isInit);
-  return appendMeasurement(yawErrorDataQueue, (void *)error);
-}
+// bool estimatorKalmanEnqueueYawError(const yawErrorMeasurement_t* error)
+// {
+//   ASSERT(isInit);
+//   return appendMeasurement(yawErrorDataQueue, (void *)error);
+// }
 
-bool estimatorKalmanEnqueueSweepAngles(const sweepAngleMeasurement_t *angles)
-{
-  ASSERT(isInit);
-  return appendMeasurement(sweepAnglesDataQueue, (void *)angles);
-}
+// bool estimatorKalmanEnqueueSweepAngles(const sweepAngleMeasurement_t *angles)
+// {
+//   ASSERT(isInit);
+//   return appendMeasurement(sweepAnglesDataQueue, (void *)angles);
+// }
 
 bool estimatorKalmanTest(void)
 {
@@ -735,12 +757,12 @@ LOG_GROUP_START(kalman)
   LOG_ADD(LOG_FLOAT, q2, &coreData.q[2])
   LOG_ADD(LOG_FLOAT, q3, &coreData.q[3])
 
-  STATS_CNT_RATE_LOG_ADD(rtUpdate, &updateCounter)
-  STATS_CNT_RATE_LOG_ADD(rtPred, &predictionCounter)
-  STATS_CNT_RATE_LOG_ADD(rtBaro, &baroUpdateCounter)
-  STATS_CNT_RATE_LOG_ADD(rtFinal, &finalizeCounter)
-  STATS_CNT_RATE_LOG_ADD(rtApnd, &measurementAppendedCounter)
-  STATS_CNT_RATE_LOG_ADD(rtRej, &measurementNotAppendedCounter)
+  // STATS_CNT_RATE_LOG_ADD(rtUpdate, &updateCounter)
+  // STATS_CNT_RATE_LOG_ADD(rtPred, &predictionCounter)
+  // STATS_CNT_RATE_LOG_ADD(rtBaro, &baroUpdateCounter)
+  // STATS_CNT_RATE_LOG_ADD(rtFinal, &finalizeCounter)
+  // STATS_CNT_RATE_LOG_ADD(rtApnd, &measurementAppendedCounter)
+  // STATS_CNT_RATE_LOG_ADD(rtRej, &measurementNotAppendedCounter)
 LOG_GROUP_STOP(kalman)
 
 PARAM_GROUP_START(kalman)
