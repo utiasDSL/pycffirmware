@@ -1,7 +1,7 @@
 """Compiles the cffirmware C extension."""
 
 from distutils.core import setup, Extension
-import os
+import os, sys
 import glob
 
 import numpy as np
@@ -46,15 +46,24 @@ fw_sources = [os.path.join(fw_dir, "src/modules/src", mod) for mod in modules] \
     + [os.path.join(fw_dir, "src/utils/src", mod) for mod in utils] \
     + [os.path.join(fw_dir, "src/drivers/src", mod) for mod in drivers] + math_packages
 
+if sys.platform == 'win32':
+    compile_args=[
+        "-Ox",
+        "-D__fp16=uint16_t",
+        "/std:c++17"
+    ]
+else:
+    compile_args=[
+        "-O3",
+        "-D__fp16=uint16_t",
+        "-std=gnu11"
+    ]
 
 cffirmware = Extension(
     "_cffirmware",
     include_dirs=include,
     sources=fw_sources + ["cffirmware_wrap.c"],
-    extra_compile_args=[
-        "-O3",
-        "-D__fp16=uint16_t",
-    ],
+    extra_compile_args=compile_args,
 )
 
 setup(name="cffirmware", version="1.0", ext_modules=[cffirmware])

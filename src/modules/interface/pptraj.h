@@ -43,6 +43,9 @@ Header file for piecewise polynomial trajectories
 #define PP_DEGREE (7)
 #define PP_SIZE (PP_DEGREE + 1)
 
+#ifdef _WIN32
+#define __attribute__(x)
+#endif
 
 //
 // 1d polynomial functions.

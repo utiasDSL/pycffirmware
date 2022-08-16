@@ -7,8 +7,8 @@
 #include "position_controller.h"
 #include "controller_pid.h"
 
-#include "log.h"
-#include "param.h"
+// #include "log.h"
+// #include "param.h"
 #include "math3d.h"
 
 #define ATTITUDE_UPDATE_DT    (float)(1.0f/ATTITUDE_RATE)
@@ -153,24 +153,24 @@ void controllerPid(control_t *control, setpoint_t *setpoint,
 }
 
 
-LOG_GROUP_START(controller)
-LOG_ADD(LOG_FLOAT, cmd_thrust, &cmd_thrust)
-LOG_ADD(LOG_FLOAT, cmd_roll, &cmd_roll)
-LOG_ADD(LOG_FLOAT, cmd_pitch, &cmd_pitch)
-LOG_ADD(LOG_FLOAT, cmd_yaw, &cmd_yaw)
-LOG_ADD(LOG_FLOAT, r_roll, &r_roll)
-LOG_ADD(LOG_FLOAT, r_pitch, &r_pitch)
-LOG_ADD(LOG_FLOAT, r_yaw, &r_yaw)
-LOG_ADD(LOG_FLOAT, accelz, &accelz)
-LOG_ADD(LOG_FLOAT, actuatorThrust, &actuatorThrust)
-LOG_ADD(LOG_FLOAT, roll,      &attitudeDesired.roll)
-LOG_ADD(LOG_FLOAT, pitch,     &attitudeDesired.pitch)
-LOG_ADD(LOG_FLOAT, yaw,       &attitudeDesired.yaw)
-LOG_ADD(LOG_FLOAT, rollRate,  &rateDesired.roll)
-LOG_ADD(LOG_FLOAT, pitchRate, &rateDesired.pitch)
-LOG_ADD(LOG_FLOAT, yawRate,   &rateDesired.yaw)
-LOG_GROUP_STOP(controller)
+// LOG_GROUP_START(controller)
+// LOG_ADD(LOG_FLOAT, cmd_thrust, &cmd_thrust)
+// LOG_ADD(LOG_FLOAT, cmd_roll, &cmd_roll)
+// LOG_ADD(LOG_FLOAT, cmd_pitch, &cmd_pitch)
+// LOG_ADD(LOG_FLOAT, cmd_yaw, &cmd_yaw)
+// LOG_ADD(LOG_FLOAT, r_roll, &r_roll)
+// LOG_ADD(LOG_FLOAT, r_pitch, &r_pitch)
+// LOG_ADD(LOG_FLOAT, r_yaw, &r_yaw)
+// LOG_ADD(LOG_FLOAT, accelz, &accelz)
+// LOG_ADD(LOG_FLOAT, actuatorThrust, &actuatorThrust)
+// LOG_ADD(LOG_FLOAT, roll,      &attitudeDesired.roll)
+// LOG_ADD(LOG_FLOAT, pitch,     &attitudeDesired.pitch)
+// LOG_ADD(LOG_FLOAT, yaw,       &attitudeDesired.yaw)
+// LOG_ADD(LOG_FLOAT, rollRate,  &rateDesired.roll)
+// LOG_ADD(LOG_FLOAT, pitchRate, &rateDesired.pitch)
+// LOG_ADD(LOG_FLOAT, yawRate,   &rateDesired.yaw)
+// LOG_GROUP_STOP(controller)
 
-PARAM_GROUP_START(controller)
-PARAM_ADD(PARAM_UINT8, tiltComp, &tiltCompensationEnabled)
-PARAM_GROUP_STOP(controller)
+// PARAM_GROUP_START(controller)
+// PARAM_ADD(PARAM_UINT8, tiltComp, &tiltCompensationEnabled)
+// PARAM_GROUP_STOP(controller)

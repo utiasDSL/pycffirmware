@@ -26,6 +26,10 @@
 #ifndef __STABILIZER_TYPES_H__
 #define __STABILIZER_TYPES_H__
 
+#ifdef _WIN32
+#define __attribute__(x)
+#endif
+
 #include <stdint.h>
 #include <stdbool.h>
 #include "imu_types.h"
@@ -259,21 +263,21 @@ typedef struct {
 //   lighthouseCalibrationMeasurementModel_t calibrationMeasurementModel;
 // } sweepAngleMeasurement_t;
 
-struct fullStatePacket_s {
-  int16_t x;         // position - mm
-  int16_t y;
-  int16_t z;
-  int16_t vx;        // velocity - mm / sec
-  int16_t vy;
-  int16_t vz;
-  int16_t ax;        // acceleration - mm / sec^2
-  int16_t ay;
-  int16_t az;
-  int32_t quat;      // compressed quaternion, see quatcompress.h
-  int16_t rateRoll;  // angular velocity - milliradians / sec
-  int16_t ratePitch; //  (NOTE: limits to about 5 full circles per sec.
-  int16_t rateYaw;   //   may not be enough for extremely aggressive flight.)
-} fullStatePacket_t;
+// struct fullStatePacket_s {
+//   int16_t x;         // position - mm
+//   int16_t y;
+//   int16_t z;
+//   int16_t vx;        // velocity - mm / sec
+//   int16_t vy;
+//   int16_t vz;
+//   int16_t ax;        // acceleration - mm / sec^2
+//   int16_t ay;
+//   int16_t az;
+//   int32_t quat;      // compressed quaternion, see quatcompress.h
+//   int16_t rateRoll;  // angular velocity - milliradians / sec
+//   int16_t ratePitch; //  (NOTE: limits to about 5 full circles per sec.
+//   int16_t rateYaw;   //   may not be enough for extremely aggressive flight.)
+// } fullStatePacket_t;
 
 // Frequencies to bo used with the RATE_DO_EXECUTE_HZ macro. Do NOT use an arbitrary number.
 #define RATE_1000_HZ 1000

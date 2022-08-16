@@ -7,7 +7,8 @@ the Crazyflie 2.X and the Roadrunner. This project is meant for simulation of on
 Clone this repo 
 
 ```
-git clone https://github.com/spencerteetaert/crazyflie-firmware.git --single_branch --branch=python_wrapper
+git clone https://github.com/spencerteetaert/crazyflie-firmware.git --single-branch --branch=python_wrapper
+cd crazyflie-firmware/
 ```
 
 Initialize sub repositories 
@@ -24,12 +25,28 @@ Install Numpy
 pip install numpy
 ```
 
+
+### **For Linux**
+
 Navigate to and run the build script. 
 
 ```
-cd crazyflie-firmware/python_wrapper
+cd python_wrapper
 chmod +x build.sh
 ./build.sh
+```
+
+### **For Windows** 
+
+Install [Visual Studios](https://visualstudio.microsoft.com/downloads/). Make sure to include C++ and MSVC build tools. 
+
+Download the prebuilt [swig executable for windows](https://www.swig.org/download.html). Add the folder containing swig.exe to your path environment variable.
+
+Navigate to and run the windows build script. 
+
+```
+cd python_wrapper
+build_windows.bat
 ```
 
 ## Usage 

@@ -29,6 +29,10 @@
 #include "pptraj.h"
 #include <stdio.h>
 
+#ifdef _WIN32
+#define bzero(b,len) (memset((b), '\0', (len)), (void) 0)  
+#endif
+
 enum piecewise_traj_storage_type {
 	PPTRAJ_STORAGE_CONSTANT = 0,
 	PPTRAJ_STORAGE_LINEAR = 1,

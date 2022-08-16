@@ -26,8 +26,8 @@
 #include <math.h>
 
 #include "sensfusion6.h"
-#include "log.h"
-#include "param.h"
+// #include "log.h"
+// #include "param.h"
 #include "physicalConstants.h"
 
 //#define MADWICK_QUATERNION_IMU
@@ -314,25 +314,25 @@ static void estimatedGravityDirection(float* gx, float* gy, float* gz)
   *gz = qw * qw - qx * qx - qy * qy + qz * qz;
 }
 
-LOG_GROUP_START(sensfusion6)
-  LOG_ADD(LOG_FLOAT, qw, &qw)
-  LOG_ADD(LOG_FLOAT, qx, &qx)
-  LOG_ADD(LOG_FLOAT, qy, &qy)
-  LOG_ADD(LOG_FLOAT, qz, &qz)
-  LOG_ADD(LOG_FLOAT, gravityX, &gravX)
-  LOG_ADD(LOG_FLOAT, gravityY, &gravY)
-  LOG_ADD(LOG_FLOAT, gravityZ, &gravZ)
-  LOG_ADD(LOG_FLOAT, accZbase, &baseZacc)
-  LOG_ADD(LOG_UINT8, isInit, &isInit)
-  LOG_ADD(LOG_UINT8, isCalibrated, &isCalibrated)
-LOG_GROUP_STOP(sensfusion6)
+// LOG_GROUP_START(sensfusion6)
+//   LOG_ADD(LOG_FLOAT, qw, &qw)
+//   LOG_ADD(LOG_FLOAT, qx, &qx)
+//   LOG_ADD(LOG_FLOAT, qy, &qy)
+//   LOG_ADD(LOG_FLOAT, qz, &qz)
+//   LOG_ADD(LOG_FLOAT, gravityX, &gravX)
+//   LOG_ADD(LOG_FLOAT, gravityY, &gravY)
+//   LOG_ADD(LOG_FLOAT, gravityZ, &gravZ)
+//   LOG_ADD(LOG_FLOAT, accZbase, &baseZacc)
+//   LOG_ADD(LOG_UINT8, isInit, &isInit)
+//   LOG_ADD(LOG_UINT8, isCalibrated, &isCalibrated)
+// LOG_GROUP_STOP(sensfusion6)
 
-PARAM_GROUP_START(sensfusion6)
-#ifdef MADWICK_QUATERNION_IMU
-PARAM_ADD(PARAM_FLOAT, beta, &beta)
-#else // MAHONY_QUATERNION_IMU
-PARAM_ADD(PARAM_FLOAT, kp, &twoKp)
-PARAM_ADD(PARAM_FLOAT, ki, &twoKi)
-#endif
-PARAM_ADD(PARAM_FLOAT, baseZacc, &baseZacc)
-PARAM_GROUP_STOP(sensfusion6)
+// PARAM_GROUP_START(sensfusion6)
+// #ifdef MADWICK_QUATERNION_IMU
+// PARAM_ADD(PARAM_FLOAT, beta, &beta)
+// #else // MAHONY_QUATERNION_IMU
+// PARAM_ADD(PARAM_FLOAT, kp, &twoKp)
+// PARAM_ADD(PARAM_FLOAT, ki, &twoKi)
+// #endif
+// PARAM_ADD(PARAM_FLOAT, baseZacc, &baseZacc)
+// PARAM_GROUP_STOP(sensfusion6)

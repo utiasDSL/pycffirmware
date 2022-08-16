@@ -43,6 +43,9 @@
 
 #include "log.h"
 
+#ifdef _WIN32
+#define __attribute__(x)
+#endif
 
 static bool isInit;
 
