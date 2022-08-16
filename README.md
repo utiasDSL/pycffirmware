@@ -17,7 +17,7 @@ Initialize sub repositories
 git submodule update --init --recursive
 ```
 
-Install swig for your machine. Installation instructions can be found [here](https://www.swig.org/download.html) 
+Install swig for your machine. Installation instructions can be found [here](https://www.swig.org/download.html). Ensure that the install location is added to your path variable. 
 
 Install Numpy 
 
@@ -28,19 +28,39 @@ pip install numpy
 
 ### **For Linux**
 
+Install the gcc compiler and make command. 
+```
+sudo apt update
+sudo apt install build-essential
+```
+
 Navigate to and run the build script. 
 
 ```
 cd python_wrapper
-chmod +x build.sh
-./build.sh
+chmod +x build_linux.sh
+./build_linux.sh
+```
+
+
+### **For MacOS**
+
+Install the gcc compiler and make command.
+```
+brew install gcc make
+```
+
+Navigate to and run the build script. 
+
+```
+cd python_wrapper
+chmod +x build_osx.sh
+./build_osx.sh
 ```
 
 ### **For Windows** 
 
 Install [Visual Studios](https://visualstudio.microsoft.com/downloads/). Make sure to include C++ and MSVC build tools. 
-
-Download the prebuilt [swig executable for windows](https://www.swig.org/download.html). Add the folder containing swig.exe to your path environment variable.
 
 Navigate to and run the windows build script. 
 
