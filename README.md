@@ -21,9 +21,9 @@ Install swig for your machine. Installation instructions can be found [here](htt
 
 Install Numpy 
 
-```
-pip install numpy
-```
+```pip install numpy``` on linux/osx
+
+```python -m pip install numpy``` on windows 
 
 
 ### **For Linux**
@@ -45,10 +45,12 @@ chmod +x build_linux.sh
 
 ### **For MacOS**
 
-Install the gcc compiler and make command.
+Install the gcc compiler and make command. 
 ```
-brew install gcc make
+brew install gcc 
+brew install make
 ```
+Run ```xcode-select --install``` if prompted. If gcc is installed in a different location than ```/usr/local/bin/gcc-12``` you will need to edit build_osx.sh to reflect this. You can find the install location using ```locate */bin/gcc-*```
 
 Navigate to and run the build script. 
 
