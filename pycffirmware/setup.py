@@ -60,10 +60,10 @@ else:
     ]
 
 cffirmware = Extension(
-    "_cffirmware",
+    "_pycffirmware",
     include_dirs=include,
-    sources=fw_sources + ["cffirmware_wrap.c"],
+    sources=fw_sources + ["pycffirmware_wrap.c"],
     extra_compile_args=compile_args,
 )
 
-setup(name="cffirmware", version="1.0", ext_modules=[cffirmware])
+setup(name="pycffirmware", version="1.0", ext_modules=[cffirmware])
