@@ -7,8 +7,8 @@ the Crazyflie 2.X and the Roadrunner. This project is meant for simulation of on
 Clone this repo 
 
 ```
-git clone https://github.com/spencerteetaert/crazyflie-firmware.git --single-branch --branch=python_wrapper
-cd crazyflie-firmware/
+git clone https://github.com/utiasDSL/pycffirmware.git
+cd pycffirmware/
 ```
 
 Initialize sub repositories 
@@ -37,7 +37,7 @@ sudo apt install build-essential
 Navigate to and run the build script. 
 
 ```
-cd python_wrapper
+cd pycffirmware
 chmod +x build_linux.sh
 ./build_linux.sh
 ```
@@ -55,7 +55,7 @@ Run ```xcode-select --install``` if prompted. If gcc is installed in a different
 Navigate to and run the build script. 
 
 ```
-cd python_wrapper
+cd pycffirmware
 chmod +x build_osx.sh
 ./build_osx.sh
 ```
@@ -67,7 +67,7 @@ Install [Visual Studios](https://visualstudio.microsoft.com/downloads/). Make su
 Navigate to and run the windows build script. 
 
 ```
-cd python_wrapper
+cd pycffirmware
 build_windows.bat
 ```
 
