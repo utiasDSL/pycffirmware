@@ -1,8 +1,8 @@
 rmdir build /s
-rmdir cffirmware.egg-info /s
-del cffirmware_wrap.c 
-del cffirmware.py
-del _cffirmware.cp38-win_amd64.pyd
+rmdir pycffirmware.egg-info /s
+del pycffirmware_wrap.c 
+del pycffirmware.py
+del _pycffirmware.cp38-win_amd64.pyd
 
 set CSW_PYTHON=python
 nmake
