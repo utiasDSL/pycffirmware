@@ -1,4 +1,4 @@
-%module cffirmware
+%module pycffirmware
 
 // ignore GNU specific compiler attributes
 #define __attribute__(x)
