@@ -26,14 +26,10 @@
 #ifndef __STABILIZER_TYPES_H__
 #define __STABILIZER_TYPES_H__
 
-#ifdef _WIN32
-#define __attribute__(x)
-#endif
-
 #include <stdint.h>
 #include <stdbool.h>
 #include "imu_types.h"
-// #include "lighthouse_calibration.h"
+#include "lighthouse_calibration.h"
 
 /* Data structure used by the stabilizer subsystem.
  * All have a timestamp to be set when the data is calculated.
@@ -249,35 +245,19 @@ typedef struct {
   float stdDev;
 } yawErrorMeasurement_t;
 
-// /** Sweep angle measurement */
-// typedef struct {
-//   uint32_t timestamp;
-//   const vec3d* sensorPos;    // Sensor position in the CF reference frame
-//   const vec3d* rotorPos;     // Pos of rotor origin in global reference frame
-//   const mat3d* rotorRot;     // Rotor rotation matrix
-//   const mat3d* rotorRotInv;  // Inverted rotor rotation matrix
-//   float t;                   // t is the tilt angle of the light plane on the rotor
-//   float measuredSweepAngle;
-//   float stdDev;
-//   const lighthouseCalibrationSweep_t* calib;
-//   lighthouseCalibrationMeasurementModel_t calibrationMeasurementModel;
-// } sweepAngleMeasurement_t;
-
-// struct fullStatePacket_s {
-//   int16_t x;         // position - mm
-//   int16_t y;
-//   int16_t z;
-//   int16_t vx;        // velocity - mm / sec
-//   int16_t vy;
-//   int16_t vz;
-//   int16_t ax;        // acceleration - mm / sec^2
-//   int16_t ay;
-//   int16_t az;
-//   int32_t quat;      // compressed quaternion, see quatcompress.h
-//   int16_t rateRoll;  // angular velocity - milliradians / sec
-//   int16_t ratePitch; //  (NOTE: limits to about 5 full circles per sec.
-//   int16_t rateYaw;   //   may not be enough for extremely aggressive flight.)
-// } fullStatePacket_t;
+/** Sweep angle measurement */
+typedef struct {
+  uint32_t timestamp;
+  const vec3d* sensorPos;    // Sensor position in the CF reference frame
+  const vec3d* rotorPos;     // Pos of rotor origin in global reference frame
+  const mat3d* rotorRot;     // Rotor rotation matrix
+  const mat3d* rotorRotInv;  // Inverted rotor rotation matrix
+  float t;                   // t is the tilt angle of the light plane on the rotor
+  float measuredSweepAngle;
+  float stdDev;
+  const lighthouseCalibrationSweep_t* calib;
+  lighthouseCalibrationMeasurementModel_t calibrationMeasurementModel;
+} sweepAngleMeasurement_t;
 
 // Frequencies to bo used with the RATE_DO_EXECUTE_HZ macro. Do NOT use an arbitrary number.
 #define RATE_1000_HZ 1000
