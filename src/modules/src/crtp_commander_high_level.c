@@ -43,19 +43,18 @@ such as: take-off, landing, polynomial trajectories.
 #include <math.h>
 
 /* FreeRtos includes */
-// #include "FreeRTOS.h"
-// #include "task.h"
-// #include "semphr.h"
+#include "FreeRTOS.h"
+#include "task.h"
+#include "semphr.h"
 
 // Crazyswarm includes
 #include "crtp.h"
 #include "crtp_commander_high_level.h"
 #include "planner.h"
-// #include "log.h"
-// #include "param.h"
-// #include "static_mem.h"
-#define portMAX_DELAY 0xffff
-// #include "mem.h"
+#include "log.h"
+#include "param.h"
+#include "static_mem.h"
+#include "mem.h"
 
 // Local types
 enum TrajectoryLocation_e {
@@ -99,32 +98,25 @@ static struct piecewise_traj trajectory;
 static struct piecewise_traj_compressed  compressed_trajectory;
 
 // makes sure that we don't evaluate the trajectory while it is being changed
-// static xSemaphoreHandle lockTraj;
-// static StaticSemaphore_t lockTrajBuffer;
-static void* lockTraj;
-static void* lockTrajBuffer;
-static float t = 0; 
-
-void crtpCommanderHighLevelUpdateTime(float time){
-  t = time;
-}
+static xSemaphoreHandle lockTraj;
+static StaticSemaphore_t lockTrajBuffer;
 
 // safe default settings for takeoff and landing velocity
 static float defaultTakeoffVelocity = 0.5f;
 static float defaultLandingVelocity = 0.5f;
 
 // Trajectory memory handling from the memory module
-// static uint32_t handleMemGetSize(void) { return crtpCommanderHighLevelTrajectoryMemSize(); }
-// static bool handleMemRead(const uint32_t memAddr, const uint8_t readLen, uint8_t* buffer);
-// static bool handleMemWrite(const uint32_t memAddr, const uint8_t writeLen, const uint8_t* buffer);
-// static const MemoryHandlerDef_t memDef = {
-//   .type = MEM_TYPE_TRAJ,
-//   .getSize = handleMemGetSize,
-//   .read = handleMemRead,
-//   .write = handleMemWrite,
-// };
+static uint32_t handleMemGetSize(void) { return crtpCommanderHighLevelTrajectoryMemSize(); }
+static bool handleMemRead(const uint32_t memAddr, const uint8_t readLen, uint8_t* buffer);
+static bool handleMemWrite(const uint32_t memAddr, const uint8_t writeLen, const uint8_t* buffer);
+static const MemoryHandlerDef_t memDef = {
+  .type = MEM_TYPE_TRAJ,
+  .getSize = handleMemGetSize,
+  .read = handleMemRead,
+  .write = handleMemWrite,
+};
 
-// STATIC_MEM_TASK_ALLOC(crtpCommanderHighLevelTask, CMD_HIGH_LEVEL_TASK_STACKSIZE);
+STATIC_MEM_TASK_ALLOC(crtpCommanderHighLevelTask, CMD_HIGH_LEVEL_TASK_STACKSIZE);
 
 // CRTP Packet definitions
 
@@ -265,13 +257,13 @@ void crtpCommanderHighLevelInit(void)
     return;
   }
 
-  // memoryRegisterHandler(&memDef);
+  memoryRegisterHandler(&memDef);
   plan_init(&planner);
 
   //Start the trajectory task
-  // STATIC_MEM_TASK_CREATE(crtpCommanderHighLevelTask, crtpCommanderHighLevelTask, CMD_HIGH_LEVEL_TASK_NAME, NULL, CMD_HIGH_LEVEL_TASK_PRI);
+  STATIC_MEM_TASK_CREATE(crtpCommanderHighLevelTask, crtpCommanderHighLevelTask, CMD_HIGH_LEVEL_TASK_NAME, NULL, CMD_HIGH_LEVEL_TASK_PRI);
 
-  // lockTraj = xSemaphoreCreateMutexStatic(&lockTrajBuffer);
+  lockTraj = xSemaphoreCreateMutexStatic(&lockTrajBuffer);
 
   pos = vzero();
   vel = vzero();
@@ -287,23 +279,23 @@ bool crtpCommanderHighLevelIsStopped()
 
 void crtpCommanderHighLevelTellState(const state_t *state)
 {
-  // xSemaphoreTake(lockTraj, portMAX_DELAY);
+  xSemaphoreTake(lockTraj, portMAX_DELAY);
   pos = state2vec(state->position);
   vel = state2vec(state->velocity);
   yaw = radians(state->attitude.yaw);
-  // xSemaphoreGive(lockTraj);
+  xSemaphoreGive(lockTraj);
 }
 
 void crtpCommanderHighLevelGetSetpoint(setpoint_t* setpoint, const state_t *state)
 {
-  // xSemaphoreTake(lockTraj, portMAX_DELAY);
-  // float t = usecTimestamp() / 1e6;
+  xSemaphoreTake(lockTraj, portMAX_DELAY);
+  float t = usecTimestamp() / 1e6;
   struct traj_eval ev = plan_current_goal(&planner, t);
   if (!is_traj_eval_valid(&ev)) {
     // programming error
     plan_stop(&planner);
   }
-  // xSemaphoreGive(lockTraj);
+  xSemaphoreGive(lockTraj);
 
   // if we are on the ground, update the last setpoint with the current state estimate
   if (plan_is_stopped(&planner)) {
@@ -416,10 +408,10 @@ int takeoff(const struct data_takeoff* data)
 {
   int result = 0;
   if (isInGroup(data->groupMask)) {
-    // xSemaphoreTake(lockTraj, portMAX_DELAY);
-    // float t = usecTimestamp() / 1e6;
+    xSemaphoreTake(lockTraj, portMAX_DELAY);
+    float t = usecTimestamp() / 1e6;
     result = plan_takeoff(&planner, pos, yaw, data->height, 0.0f, data->duration, t);
-    // xSemaphoreGive(lockTraj);
+    xSemaphoreGive(lockTraj);
   }
   return result;
 }
@@ -428,8 +420,8 @@ int takeoff2(const struct data_takeoff_2* data)
 {
   int result = 0;
   if (isInGroup(data->groupMask)) {
-    // xSemaphoreTake(lockTraj, portMAX_DELAY);
-    // float t = usecTimestamp() / 1e6;
+    xSemaphoreTake(lockTraj, portMAX_DELAY);
+    float t = usecTimestamp() / 1e6;
 
     float hover_yaw = data->yaw;
     if (data->useCurrentYaw) {
@@ -437,7 +429,7 @@ int takeoff2(const struct data_takeoff_2* data)
     }
 
     result = plan_takeoff(&planner, pos, yaw, data->height, hover_yaw, data->duration, t);
-    // xSemaphoreGive(lockTraj);
+    xSemaphoreGive(lockTraj);
   }
   return result;
 }
@@ -446,8 +438,8 @@ int takeoff_with_velocity(const struct data_takeoff_with_velocity* data)
 {
   int result = 0;
   if (isInGroup(data->groupMask)) {
-    // xSemaphoreTake(lockTraj, portMAX_DELAY);
-    // float t = usecTimestamp() / 1e6;
+    xSemaphoreTake(lockTraj, portMAX_DELAY);
+    float t = usecTimestamp() / 1e6;
 
     float hover_yaw = data->yaw;
     if (data->useCurrentYaw) {
@@ -462,7 +454,7 @@ int takeoff_with_velocity(const struct data_takeoff_with_velocity* data)
     float velocity = data->velocity > 0 ? data->velocity : defaultTakeoffVelocity;
     float duration = fabsf(height - pos.z) / velocity;
     result = plan_takeoff(&planner, pos, yaw, height, hover_yaw, duration, t);
-    // xSemaphoreGive(lockTraj);
+    xSemaphoreGive(lockTraj);
   }
   return result;
 }
@@ -471,10 +463,10 @@ int land(const struct data_land* data)
 {
   int result = 0;
   if (isInGroup(data->groupMask)) {
-    // xSemaphoreTake(lockTraj, portMAX_DELAY);
-    // float t = usecTimestamp() / 1e6;
+    xSemaphoreTake(lockTraj, portMAX_DELAY);
+    float t = usecTimestamp() / 1e6;
     result = plan_land(&planner, pos, yaw, data->height, 0.0f, data->duration, t);
-    // xSemaphoreGive(lockTraj);
+    xSemaphoreGive(lockTraj);
   }
   return result;
 }
@@ -483,8 +475,8 @@ int land2(const struct data_land_2* data)
 {
   int result = 0;
   if (isInGroup(data->groupMask)) {
-    // xSemaphoreTake(lockTraj, portMAX_DELAY);
-    // float t = usecTimestamp() / 1e6;
+    xSemaphoreTake(lockTraj, portMAX_DELAY);
+    float t = usecTimestamp() / 1e6;
 
     float hover_yaw = data->yaw;
     if (data->useCurrentYaw) {
@@ -492,7 +484,7 @@ int land2(const struct data_land_2* data)
     }
 
     result = plan_land(&planner, pos, yaw, data->height, hover_yaw, data->duration, t);
-    // xSemaphoreGive(lockTraj);
+    xSemaphoreGive(lockTraj);
   }
   return result;
 }
@@ -501,8 +493,8 @@ int land_with_velocity(const struct data_land_with_velocity* data)
 {
   int result = 0;
   if (isInGroup(data->groupMask)) {
-    // xSemaphoreTake(lockTraj, portMAX_DELAY);
-    // float t = usecTimestamp() / 1e6;
+    xSemaphoreTake(lockTraj, portMAX_DELAY);
+    float t = usecTimestamp() / 1e6;
 
     float hover_yaw = data->yaw;
     if (data->useCurrentYaw) {
@@ -517,7 +509,7 @@ int land_with_velocity(const struct data_land_with_velocity* data)
     float velocity = data->velocity > 0 ? data->velocity : defaultLandingVelocity;
     float duration = fabsf(height - pos.z) / velocity;
     result = plan_land(&planner, pos, yaw, height, hover_yaw, duration, t);
-    // xSemaphoreGive(lockTraj);
+    xSemaphoreGive(lockTraj);
   }
   return result;
 }
@@ -526,9 +518,9 @@ int stop(const struct data_stop* data)
 {
   int result = 0;
   if (isInGroup(data->groupMask)) {
-    // xSemaphoreTake(lockTraj, portMAX_DELAY);
+    xSemaphoreTake(lockTraj, portMAX_DELAY);
     plan_stop(&planner);
-    // xSemaphoreGive(lockTraj);
+    xSemaphoreGive(lockTraj);
   }
   return result;
 }
@@ -544,8 +536,8 @@ int go_to(const struct data_go_to* data)
   int result = 0;
   if (isInGroup(data->groupMask)) {
     struct vec hover_pos = mkvec(data->x, data->y, data->z);
-    // xSemaphoreTake(lockTraj, portMAX_DELAY);
-    // float t = usecTimestamp() / 1e6;
+    xSemaphoreTake(lockTraj, portMAX_DELAY);
+    float t = usecTimestamp() / 1e6;
     if (plan_is_stopped(&planner)) {
       ev.pos = pos;
       ev.vel = vel;
@@ -555,7 +547,7 @@ int go_to(const struct data_go_to* data)
     else {
       result = plan_go_to(&planner, data->relative, hover_pos, data->yaw, data->duration, t);
     }
-    // xSemaphoreGive(lockTraj);
+    xSemaphoreGive(lockTraj);
   }
   return result;
 }
@@ -568,8 +560,8 @@ int start_trajectory(const struct data_start_trajectory* data)
       struct trajectoryDescription* trajDesc = &trajectory_descriptions[data->trajectoryId];
       if (   trajDesc->trajectoryLocation == TRAJECTORY_LOCATION_MEM
           && trajDesc->trajectoryType == CRTP_CHL_TRAJECTORY_TYPE_POLY4D) {
-        // xSemaphoreTake(lockTraj, portMAX_DELAY);
-        // float t = usecTimestamp() / 1e6;
+        xSemaphoreTake(lockTraj, portMAX_DELAY);
+        float t = usecTimestamp() / 1e6;
         trajectory.t_begin = t;
         trajectory.timescale = data->timescale;
         trajectory.n_pieces = trajDesc->trajectoryIdentifier.mem.n_pieces;
@@ -589,15 +581,15 @@ int start_trajectory(const struct data_start_trajectory* data)
           trajectory.shift = vzero();
         }
         result = plan_start_trajectory(&planner, &trajectory, data->reversed);
-        // xSemaphoreGive(lockTraj);
+        xSemaphoreGive(lockTraj);
       } else if (trajDesc->trajectoryLocation == TRAJECTORY_LOCATION_MEM
           && trajDesc->trajectoryType == CRTP_CHL_TRAJECTORY_TYPE_POLY4D_COMPRESSED) {
 
         if (data->timescale != 1 || data->reversed) {
           result = ENOEXEC;
         } else {
-          // xSemaphoreTake(lockTraj, portMAX_DELAY);
-          // float t = usecTimestamp() / 1e6;
+          xSemaphoreTake(lockTraj, portMAX_DELAY);
+          float t = usecTimestamp() / 1e6;
           piecewise_compressed_load(
             &compressed_trajectory,
             &trajectories_memory[trajDesc->trajectoryIdentifier.mem.offset]
@@ -613,7 +605,7 @@ int start_trajectory(const struct data_start_trajectory* data)
             compressed_trajectory.shift = vzero();
           }
           result = plan_start_compressed_trajectory(&planner, &compressed_trajectory);
-          // xSemaphoreGive(lockTraj);
+          xSemaphoreGive(lockTraj);
         }
 
       }
@@ -819,11 +811,11 @@ bool crtpCommanderHighLevelReadTrajectory(const uint32_t offset, const uint32_t 
 }
 
 bool crtpCommanderHighLevelIsTrajectoryFinished() {
-  // float t = usecTimestamp() / 1e6;
+  float t = usecTimestamp() / 1e6;
   return plan_is_finished(&planner, t);
 }
 
-// PARAM_GROUP_START(hlCommander)
-// PARAM_ADD(PARAM_FLOAT, vtoff, &defaultTakeoffVelocity)
-// PARAM_ADD(PARAM_FLOAT, vland, &defaultLandingVelocity)
-// PARAM_GROUP_STOP(hlCommander)
+PARAM_GROUP_START(hlCommander)
+PARAM_ADD(PARAM_FLOAT, vtoff, &defaultTakeoffVelocity)
+PARAM_ADD(PARAM_FLOAT, vland, &defaultLandingVelocity)
+PARAM_GROUP_STOP(hlCommander)

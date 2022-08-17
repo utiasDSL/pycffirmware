@@ -27,13 +27,12 @@
 #include <math.h>
 #include "num.h"
 
-// #include "commander.h"
-// #include "log.h"
-// #include "param.h"
+#include "commander.h"
+#include "log.h"
+#include "param.h"
 #include "pid.h"
 #include "num.h"
 #include "position_controller.h"
-#include "physicalConstants.h"
 
 struct pidInit_s {
   float kp;
@@ -234,73 +233,73 @@ void positionControllerResetAllPID()
   pidReset(&this.pidVZ.pid);
 }
 
-// LOG_GROUP_START(posCtl)
+LOG_GROUP_START(posCtl)
 
-// LOG_ADD(LOG_FLOAT, targetVX, &this.pidVX.pid.desired)
-// LOG_ADD(LOG_FLOAT, targetVY, &this.pidVY.pid.desired)
-// LOG_ADD(LOG_FLOAT, targetVZ, &this.pidVZ.pid.desired)
+LOG_ADD(LOG_FLOAT, targetVX, &this.pidVX.pid.desired)
+LOG_ADD(LOG_FLOAT, targetVY, &this.pidVY.pid.desired)
+LOG_ADD(LOG_FLOAT, targetVZ, &this.pidVZ.pid.desired)
 
-// LOG_ADD(LOG_FLOAT, targetX, &this.pidX.pid.desired)
-// LOG_ADD(LOG_FLOAT, targetY, &this.pidY.pid.desired)
-// LOG_ADD(LOG_FLOAT, targetZ, &this.pidZ.pid.desired)
+LOG_ADD(LOG_FLOAT, targetX, &this.pidX.pid.desired)
+LOG_ADD(LOG_FLOAT, targetY, &this.pidY.pid.desired)
+LOG_ADD(LOG_FLOAT, targetZ, &this.pidZ.pid.desired)
 
-// LOG_ADD(LOG_FLOAT, Xp, &this.pidX.pid.outP)
-// LOG_ADD(LOG_FLOAT, Xi, &this.pidX.pid.outI)
-// LOG_ADD(LOG_FLOAT, Xd, &this.pidX.pid.outD)
+LOG_ADD(LOG_FLOAT, Xp, &this.pidX.pid.outP)
+LOG_ADD(LOG_FLOAT, Xi, &this.pidX.pid.outI)
+LOG_ADD(LOG_FLOAT, Xd, &this.pidX.pid.outD)
 
-// LOG_ADD(LOG_FLOAT, Yp, &this.pidY.pid.outP)
-// LOG_ADD(LOG_FLOAT, Yi, &this.pidY.pid.outI)
-// LOG_ADD(LOG_FLOAT, Yd, &this.pidY.pid.outD)
+LOG_ADD(LOG_FLOAT, Yp, &this.pidY.pid.outP)
+LOG_ADD(LOG_FLOAT, Yi, &this.pidY.pid.outI)
+LOG_ADD(LOG_FLOAT, Yd, &this.pidY.pid.outD)
 
-// LOG_ADD(LOG_FLOAT, Zp, &this.pidZ.pid.outP)
-// LOG_ADD(LOG_FLOAT, Zi, &this.pidZ.pid.outI)
-// LOG_ADD(LOG_FLOAT, Zd, &this.pidZ.pid.outD)
+LOG_ADD(LOG_FLOAT, Zp, &this.pidZ.pid.outP)
+LOG_ADD(LOG_FLOAT, Zi, &this.pidZ.pid.outI)
+LOG_ADD(LOG_FLOAT, Zd, &this.pidZ.pid.outD)
 
-// LOG_ADD(LOG_FLOAT, VXp, &this.pidVX.pid.outP)
-// LOG_ADD(LOG_FLOAT, VXi, &this.pidVX.pid.outI)
-// LOG_ADD(LOG_FLOAT, VXd, &this.pidVX.pid.outD)
+LOG_ADD(LOG_FLOAT, VXp, &this.pidVX.pid.outP)
+LOG_ADD(LOG_FLOAT, VXi, &this.pidVX.pid.outI)
+LOG_ADD(LOG_FLOAT, VXd, &this.pidVX.pid.outD)
 
-// LOG_ADD(LOG_FLOAT, VZp, &this.pidVZ.pid.outP)
-// LOG_ADD(LOG_FLOAT, VZi, &this.pidVZ.pid.outI)
-// LOG_ADD(LOG_FLOAT, VZd, &this.pidVZ.pid.outD)
+LOG_ADD(LOG_FLOAT, VZp, &this.pidVZ.pid.outP)
+LOG_ADD(LOG_FLOAT, VZi, &this.pidVZ.pid.outI)
+LOG_ADD(LOG_FLOAT, VZd, &this.pidVZ.pid.outD)
 
-// LOG_GROUP_STOP(posCtl)
+LOG_GROUP_STOP(posCtl)
 
-// PARAM_GROUP_START(velCtlPid)
+PARAM_GROUP_START(velCtlPid)
 
-// PARAM_ADD(PARAM_FLOAT, vxKp, &this.pidVX.pid.kp)
-// PARAM_ADD(PARAM_FLOAT, vxKi, &this.pidVX.pid.ki)
-// PARAM_ADD(PARAM_FLOAT, vxKd, &this.pidVX.pid.kd)
+PARAM_ADD(PARAM_FLOAT, vxKp, &this.pidVX.pid.kp)
+PARAM_ADD(PARAM_FLOAT, vxKi, &this.pidVX.pid.ki)
+PARAM_ADD(PARAM_FLOAT, vxKd, &this.pidVX.pid.kd)
 
-// PARAM_ADD(PARAM_FLOAT, vyKp, &this.pidVY.pid.kp)
-// PARAM_ADD(PARAM_FLOAT, vyKi, &this.pidVY.pid.ki)
-// PARAM_ADD(PARAM_FLOAT, vyKd, &this.pidVY.pid.kd)
+PARAM_ADD(PARAM_FLOAT, vyKp, &this.pidVY.pid.kp)
+PARAM_ADD(PARAM_FLOAT, vyKi, &this.pidVY.pid.ki)
+PARAM_ADD(PARAM_FLOAT, vyKd, &this.pidVY.pid.kd)
 
-// PARAM_ADD(PARAM_FLOAT, vzKp, &this.pidVZ.pid.kp)
-// PARAM_ADD(PARAM_FLOAT, vzKi, &this.pidVZ.pid.ki)
-// PARAM_ADD(PARAM_FLOAT, vzKd, &this.pidVZ.pid.kd)
+PARAM_ADD(PARAM_FLOAT, vzKp, &this.pidVZ.pid.kp)
+PARAM_ADD(PARAM_FLOAT, vzKi, &this.pidVZ.pid.ki)
+PARAM_ADD(PARAM_FLOAT, vzKd, &this.pidVZ.pid.kd)
 
-// PARAM_GROUP_STOP(velCtlPid)
+PARAM_GROUP_STOP(velCtlPid)
 
-// PARAM_GROUP_START(posCtlPid)
+PARAM_GROUP_START(posCtlPid)
 
-// PARAM_ADD(PARAM_FLOAT, xKp, &this.pidX.pid.kp)
-// PARAM_ADD(PARAM_FLOAT, xKi, &this.pidX.pid.ki)
-// PARAM_ADD(PARAM_FLOAT, xKd, &this.pidX.pid.kd)
+PARAM_ADD(PARAM_FLOAT, xKp, &this.pidX.pid.kp)
+PARAM_ADD(PARAM_FLOAT, xKi, &this.pidX.pid.ki)
+PARAM_ADD(PARAM_FLOAT, xKd, &this.pidX.pid.kd)
 
-// PARAM_ADD(PARAM_FLOAT, yKp, &this.pidY.pid.kp)
-// PARAM_ADD(PARAM_FLOAT, yKi, &this.pidY.pid.ki)
-// PARAM_ADD(PARAM_FLOAT, yKd, &this.pidY.pid.kd)
+PARAM_ADD(PARAM_FLOAT, yKp, &this.pidY.pid.kp)
+PARAM_ADD(PARAM_FLOAT, yKi, &this.pidY.pid.ki)
+PARAM_ADD(PARAM_FLOAT, yKd, &this.pidY.pid.kd)
 
-// PARAM_ADD(PARAM_FLOAT, zKp, &this.pidZ.pid.kp)
-// PARAM_ADD(PARAM_FLOAT, zKi, &this.pidZ.pid.ki)
-// PARAM_ADD(PARAM_FLOAT, zKd, &this.pidZ.pid.kd)
+PARAM_ADD(PARAM_FLOAT, zKp, &this.pidZ.pid.kp)
+PARAM_ADD(PARAM_FLOAT, zKi, &this.pidZ.pid.ki)
+PARAM_ADD(PARAM_FLOAT, zKd, &this.pidZ.pid.kd)
 
-// PARAM_ADD(PARAM_UINT16, thrustBase, &this.thrustBase)
-// PARAM_ADD(PARAM_UINT16, thrustMin, &this.thrustMin)
+PARAM_ADD(PARAM_UINT16, thrustBase, &this.thrustBase)
+PARAM_ADD(PARAM_UINT16, thrustMin, &this.thrustMin)
 
-// PARAM_ADD(PARAM_FLOAT, rpLimit,  &rpLimit)
-// PARAM_ADD(PARAM_FLOAT, xyVelMax, &xyVelMax)
-// PARAM_ADD(PARAM_FLOAT, zVelMax,  &zVelMax)
+PARAM_ADD(PARAM_FLOAT, rpLimit,  &rpLimit)
+PARAM_ADD(PARAM_FLOAT, xyVelMax, &xyVelMax)
+PARAM_ADD(PARAM_FLOAT, zVelMax,  &zVelMax)
 
-// PARAM_GROUP_STOP(posCtlPid)
+PARAM_GROUP_STOP(posCtlPid)
