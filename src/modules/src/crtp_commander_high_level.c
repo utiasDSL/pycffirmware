@@ -51,8 +51,8 @@ such as: take-off, landing, polynomial trajectories.
 #include "crtp.h"
 #include "crtp_commander_high_level.h"
 #include "planner.h"
-#include "log.h"
-#include "param.h"
+// #include "log.h"
+// #include "param.h"
 // #include "static_mem.h"
 #define portMAX_DELAY 0xffff
 // #include "mem.h"
@@ -823,7 +823,7 @@ bool crtpCommanderHighLevelIsTrajectoryFinished() {
   return plan_is_finished(&planner, t);
 }
 
-PARAM_GROUP_START(hlCommander)
-PARAM_ADD(PARAM_FLOAT, vtoff, &defaultTakeoffVelocity)
-PARAM_ADD(PARAM_FLOAT, vland, &defaultLandingVelocity)
-PARAM_GROUP_STOP(hlCommander)
+// PARAM_GROUP_START(hlCommander)
+// PARAM_ADD(PARAM_FLOAT, vtoff, &defaultTakeoffVelocity)
+// PARAM_ADD(PARAM_FLOAT, vland, &defaultLandingVelocity)
+// PARAM_GROUP_STOP(hlCommander)

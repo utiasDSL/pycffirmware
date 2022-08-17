@@ -30,6 +30,10 @@
 #include <stdint.h>
 #include <stdbool.h>
 
+#ifdef _WIN32
+#define __attribute__(x)
+#endif
+
 #define CRTP_MAX_DATA_SIZE 30
 
 #define CRTP_HEADER(port, channel) (((port & 0x0F) << 4) | (channel & 0x0F))

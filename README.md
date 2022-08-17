@@ -7,7 +7,8 @@ the Crazyflie 2.X and the Roadrunner. This project is meant for simulation of on
 Clone this repo 
 
 ```
-git clone https://github.com/spencerteetaert/crazyflie-firmware.git --single_branch --branch=python_wrapper
+git clone https://github.com/spencerteetaert/crazyflie-firmware.git --single-branch --branch=python_wrapper
+cd crazyflie-firmware/
 ```
 
 Initialize sub repositories 
@@ -16,20 +17,58 @@ Initialize sub repositories
 git submodule update --init --recursive
 ```
 
-Install swig for your machine. Installation instructions can be found [here](https://www.swig.org/download.html) 
+Install swig for your machine. Installation instructions can be found [here](https://www.swig.org/download.html). Ensure that the install location is added to your path variable. 
 
 Install Numpy 
 
+```pip install numpy``` on linux/osx
+
+```python -m pip install numpy``` on windows 
+
+
+### **For Linux**
+
+Install the gcc compiler and make command. 
 ```
-pip install numpy
+sudo apt update
+sudo apt install build-essential
 ```
 
 Navigate to and run the build script. 
 
 ```
-cd crazyflie-firmware/python_wrapper
-chmod +x build.sh
-./build.sh
+cd python_wrapper
+chmod +x build_linux.sh
+./build_linux.sh
+```
+
+
+### **For MacOS**
+
+Install the gcc compiler and make command. 
+```
+brew install gcc 
+brew install make
+```
+Run ```xcode-select --install``` if prompted. If gcc is installed in a different location than ```/usr/local/bin/gcc-12``` you will need to edit build_osx.sh to reflect this. You can find the install location using ```locate */bin/gcc-*```
+
+Navigate to and run the build script. 
+
+```
+cd python_wrapper
+chmod +x build_osx.sh
+./build_osx.sh
+```
+
+### **For Windows** 
+
+Install [Visual Studios](https://visualstudio.microsoft.com/downloads/). Make sure to include C++ and MSVC build tools. 
+
+Navigate to and run the windows build script. 
+
+```
+cd python_wrapper
+build_windows.bat
 ```
 
 ## Usage 
