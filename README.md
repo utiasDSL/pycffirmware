@@ -1,4 +1,4 @@
-# Crazyflie Firmware
+# `pycffirmware`
 
 This project contains a python wrapper for the source code for the firmware used in the Crazyflie range of platforms, including
 the Crazyflie 2.X and the Roadrunner. This project is meant for simulation of on board controller response to sending commands from a ground station. 
@@ -80,7 +80,7 @@ cd pycffirmware
 build_windows.bat
 ```
 
-## Usage 
+## Use 
 This module wraps parts of the firmware that are considered "value changing" when it comes to commands. These are the modules of the firmware that could change the intended values for a positional command to fit with Crazyflie constraints. These include: 
 - Controller (only PID controller supported)
 - High level commander and planner 
