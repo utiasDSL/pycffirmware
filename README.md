@@ -5,13 +5,13 @@ the Crazyflie 2.X and the Roadrunner. This project is meant for simulation of on
 
 ## Installation
 
-Clone this repo 
+Clone this repo.
 ```
 git clone https://github.com/utiasDSL/pycffirmware.git
 cd pycffirmware/
 ```
 
-Initialize submodules 
+Initialize submodules.
 ```
 git submodule update --init --recursive
 ```
@@ -36,13 +36,14 @@ chmod +x build_linux.sh
 
 ### macOS
 
-Install [`brew`](https://brew.sh)
+Install [`brew`](https://brew.sh).
 ```
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 ```
 
-Install the gcc compiler and make command. 
+Install NumPy, SWIG, the `gcc` compiler and `make` command. 
 ```
+pip install numpy
 brew install swig
 brew install gcc 
 brew install make
@@ -66,7 +67,7 @@ chmod +x build_osx.sh
 
 Install SWIG for your machine. Installation instructions can be found [here](https://www.swig.org/download.html). Ensure that the install location is added to your path variable. 
 
-Install NumPy
+Install NumPy.
 ```
 python -m pip install numpy
 ```
