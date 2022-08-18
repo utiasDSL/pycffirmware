@@ -1,4 +1,4 @@
-# `pycffirmware`
+# pycffirmware
 
 This project contains a python wrapper for the source code for the firmware used in the Crazyflie range of platforms, including
 the Crazyflie 2.X and the Roadrunner. This project is meant for simulation of on board controller response to sending commands from a ground station. 
