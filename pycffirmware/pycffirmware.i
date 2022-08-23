@@ -24,6 +24,7 @@
 %include "filter.h"
 %include "imu_types.h"
 %include "controller_pid.h"
+%include "controller_mellinger.h"
 %include "crtp_commander_high_level.h"
 // %include "estimator_kalman.h"
 // %include "cf_math.h"
