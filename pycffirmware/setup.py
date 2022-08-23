@@ -24,6 +24,7 @@ modules = [
     "pptraj.c",
     "pptraj_compressed.c",
     "controller_pid.c",
+    "controller_mellinger.c",
     "position_controller_pid.c",
     "attitude_pid_controller.c",
     "pid.c",
