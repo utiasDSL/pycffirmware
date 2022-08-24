@@ -18,12 +18,15 @@ git submodule update --init --recursive
 
 ### Ubuntu
 
-Install SWIG for your machine. Installation instructions can be found [here](https://www.swig.org/download.html). Ensure that the install location is added to your path variable. 
+Install SWIG for your machine. Ensure that the install location is added to your path variable. 
+```
+sudo apt update
+sudo apt -y install swig
+```
 
 Install NumPy, `gcc`, and `make`. 
 ```bash
 pip install numpy
-sudo apt update
 sudo apt install build-essential
 ```
 
