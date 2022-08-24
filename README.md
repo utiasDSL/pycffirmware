@@ -32,7 +32,7 @@ sudo apt install build-essential
 
 Navigate to and run the build script. 
 ```bash
-cd pycffirmware
+cd wrapper
 chmod +x build_linux.sh
 ./build_linux.sh
 ```
@@ -61,7 +61,7 @@ locate */bin/gcc-*
 
 Navigate to and run the build script. 
 ```bash
-cd pycffirmware
+cd wrapper
 chmod +x build_osx.sh
 ./build_osx.sh
 ```
@@ -79,7 +79,7 @@ Install [Visual Studio](https://visualstudio.microsoft.com/downloads/). Make sur
 
 Navigate to and run the windows build script. 
 ```bash
-cd pycffirmware
+cd wrapper
 build_windows.bat
 ```
 
