@@ -85,11 +85,11 @@ build_windows.bat
 
 ## Use 
 This module wraps parts of the firmware that are considered "value changing" when it comes to commands. These are the modules of the firmware that could change the intended values for a positional command to fit with Crazyflie constraints. These include: 
-- Controller (only PID controller supported)
+- Controller
 - High level commander and planner 
-- State estimator (coming soon, only Kalman supported)
+- State estimator (coming soon)
 
-An example of how one might use this package can be found in [`safe-control-gym`](https://github.com/utiasDSL/safe-control-gym/blob/alpha-iros-competition/safe_control_gym/controllers/firmware/firmware_wrapper.py). 
+An example of how one can use this package can be found in [`safe-control-gym`](https://github.com/utiasDSL/safe-control-gym/blob/alpha-iros-competition/safe_control_gym/controllers/firmware/firmware_wrapper.py). 
 
 -----
 > University of Toronto's [Dynamic Systems Lab](https://github.com/utiasDSL)
