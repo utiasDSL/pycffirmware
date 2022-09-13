@@ -1,3 +1,15 @@
+# C extensions
+*.so
+
+# Distribution / packaging
+wrapper/build/
+wrapper/pycffirmware.egg-info/
+wrapper/pycffirmware.py
+wrapper/pycffirmware_wrap.c
+
+# macOS users
+.DS_Store
+
 build_info.json
 
 ^bin/dep/all
