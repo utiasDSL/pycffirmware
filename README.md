@@ -11,6 +11,11 @@ git clone https://github.com/utiasDSL/pycffirmware.git
 cd pycffirmware/
 ```
 
+Switch to the drone_racing branch.
+```bash
+git checkout drone_racing
+```
+
 Initialize submodules.
 ```bash
 git submodule update --init --recursive
